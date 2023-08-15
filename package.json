@@ -50,8 +50,6 @@
     "react": "*",
     "react-minisearch": "^6.0.2",
     "react-native": "*",
-    "react-native-camera": "^4.2.1",
-    "react-native-code-push": "^8.0.0",
     "react-native-crypto": "^2.2.0",
     "react-native-dotenv": "^3.4.7",
     "react-native-fs": "^2.20.0",
