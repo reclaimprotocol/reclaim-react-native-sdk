@@ -211,7 +211,7 @@ Once you've installed the package and set up your configuration, import `Reclaim
 import React from 'react';
 import {SafeAreaView, StyleSheet, useColorScheme} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {ReclaimHttps} from '@reclaimprotocol/reclaim-https';
+import {ReclaimHttps} from '@reclaimprotocol/reclaim-react-native';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
