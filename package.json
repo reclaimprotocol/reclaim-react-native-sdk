@@ -1,6 +1,6 @@
 {
   "name": "@reclaimprotocol/reclaim-react-native",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "React Native SDK for integrating Reclaim protocol with third party applications",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "@reclaimprotocol/reclaim-client-sdk": "^0.0.8",
     "@reclaimprotocol/reclaim-node": "^1.0.2",
     "@reclaimprotocol/reclaim-sdk": "^4.7.0",
-    "@reclaimprotocol/reclaim-zk": "^1.0.0",
+    "@reclaimprotocol/circom-chacha20": "github:reclaimprotocol/circom-chacha20",
     "@reduxjs/toolkit": "^1.9.2",
     "@stablelib/chacha20poly1305": "^1.0.1",
     "assert": "^2.0.0",

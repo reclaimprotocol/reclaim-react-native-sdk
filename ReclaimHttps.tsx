@@ -28,7 +28,7 @@ import {
 import {WebViewRPCProvider} from './lib/webviewRpc/webviewRpc';
 import {WebViewCryptoProvider} from './lib/webviewRpc/webViewCryptoProvider';
 import {SHA3} from 'sha3';
-import {ZKOperator} from '@reclaimprotocol/reclaim-zk';
+import {ZKOperator} from '@reclaimprotocol/circom-chacha20';
 import {reclaimprotocol} from '@reclaimprotocol/reclaim-sdk';
 import {Pressable} from 'react-native';
 import {backIconXml} from './assets/svgs';

@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import { makeQueue } from '@reclaimprotocol/reclaim-node/lib/utils/make-queue'
-import type { ZKOperator } from '@reclaimprotocol/reclaim-zk'
+import type { ZKOperator } from '@reclaimprotocol/circom-chacha20'
 import { WebViewRPCContext } from './webviewRpc'
 
 /**
