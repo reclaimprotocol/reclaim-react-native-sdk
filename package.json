@@ -1,6 +1,6 @@
 {
   "name": "@reclaimprotocol/reclaim-react-native",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "React Native SDK for integrating Reclaim protocol with third party applications",
   "main": "index.js",
   "scripts": {

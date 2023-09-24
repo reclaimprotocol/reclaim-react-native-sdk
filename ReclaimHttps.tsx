@@ -111,6 +111,7 @@ export default function ReclaimHttps({
     if (!match) {
       setWebViewVisible(false);
       setDisplayError('Regex does not match');
+      onFail(Error('Regex does not match'));
       throw Error('regex doesnt match');
     }
 
@@ -128,7 +129,7 @@ export default function ReclaimHttps({
   const onClickListener = () => {
     // Add the action to be performed on button click
     setWebViewVisible(true);
-    console.log('Button clicked!');
+    // console.log('Button clicked!');
   };
 
   function extractHostname(url: string): string {
@@ -189,7 +190,7 @@ export default function ReclaimHttps({
               if (runonce) {
                 return;
               }
-              console.log('navState.url', navState.url);
+              // console.log('navState.url', navState.url);
               if (navState.loading) {
                 return;
               }
@@ -211,7 +212,7 @@ export default function ReclaimHttps({
                     .map(c => `${c.name}=${c.value}`)
                     .join('; ');
 
-                  console.log('cookie', cookieStr);
+                  // console.log('cookie', cookieStr);
                   setCookie(cookieStr);
                   setLoading(true);
                   setWebViewUrl(requestedProofs[0].url);
@@ -220,13 +221,15 @@ export default function ReclaimHttps({
                     return;
                   }
                 } catch (error) {
-                  console.log('error getting cookies: ', error);
+                  setDisplayError('Error generating claim');
+                  setWebViewVisible(false);
+                  onFail(Error('Error creating claim'));
                 }
               }
             }}
             onMessage={async event => {
-              console.log('webViewUrl', webViewUrl);
-              console.log('event data', event.nativeEvent.data);
+              // console.log('webViewUrl', webViewUrl);
+              // console.log('event data', event.nativeEvent.data);
 
               try {
                 // console.log(requestedProofs[0].responseSelections);
@@ -252,8 +255,8 @@ export default function ReclaimHttps({
                   );
                 // setExtractedRegexState(extractedRegex[0].responseMatch);
                 // setExtractedParamsState(extractedParams[])
-                console.log('extractedParams', theExtractedParams);
-                console.log('extractedRegex', theExtractedRegex);
+                // console.log('extractedParams', theExtractedParams);
+                // console.log('extractedRegex', theExtractedRegex);
                 setExtractedParams(theExtractedParams);
                 // setWebViewVisible(false);
                 // createClaimHttp(
@@ -276,7 +279,9 @@ export default function ReclaimHttps({
                 setWebViewVisible(false);
                 return;
               } catch (error) {
-                console.log('error getting cookies: ', error);
+                setWebViewVisible(false);
+                setDisplayError('Claim Creation Failed');
+                onFail(Error('Claim Creation Failed'));
               }
             }}
           />
@@ -291,7 +296,7 @@ export default function ReclaimHttps({
               setAddress(parsedWallet.address);
               setPrivateKey(parsedWallet.privateKey);
               setPublicKey(parsedWallet.publicKey);
-              console.log('Wallet Info', data);
+              // console.log('Wallet Info', data);
             }}
             // Loading ethers library from CDN and an empty HTML body
             source={{
@@ -299,7 +304,7 @@ export default function ReclaimHttps({
             }}
             onLoadEnd={() => {
               if (!runonce) {
-                console.log('injected');
+                // console.log('injected');
                 walletRef.current?.injectJavaScript(
                   `
                 // This function will be called once ethers library is loaded
@@ -382,18 +387,18 @@ export default function ReclaimHttps({
               }
             }}
             onMessage={async event => {
-              console.log('webViewUrl', webViewUrl);
-              console.log('event data', event.nativeEvent.data);
+              // console.log('webViewUrl', webViewUrl);
+              // console.log('event data', event.nativeEvent.data);
 
-              console.log(event.nativeEvent.data);
+              // console.log(event.nativeEvent.data);
               const parsedData = JSON.parse(event.nativeEvent.data);
               if (parsedData.type === 'createClaimStep') {
                 if (parsedData.step.name === 'creating') {
                   setDisplayProcess('Creating Claim');
-                  console.log('creating the credntial');
+                  // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === 'witness-done') {
-                  console.log('witnessdone the credntial');
+                  // console.log('witnessdone the credntial');
                   setDisplayProcess('Claim Created Successfully');
                 }
               }
@@ -424,7 +429,9 @@ export default function ReclaimHttps({
               }
 
               if (JSON.parse(event.nativeEvent.data).type === 'error') {
-                console.log(event.nativeEvent.data);
+                setDisplayError('Error generating claim');
+                setWebViewVisible(false);
+                onFail(Error('Claim Creation Failed'));
               }
 
               return;
