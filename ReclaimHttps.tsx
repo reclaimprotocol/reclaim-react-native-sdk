@@ -1,6 +1,3 @@
-import '@azure/core-asynciterator-polyfill';
-import './shim.js';
-import 'react-native-get-random-values';
 import * as React from 'react';
 import {
   Image,
@@ -13,23 +10,6 @@ import {
 import WebView from 'react-native-webview';
 import {Dimensions} from 'react-native';
 import CookieManager from '@react-native-cookies/cookies';
-import {
-  getBeacon,
-  getWalletFromPrivateKey,
-  REACT_NATIVE_TLS_CRYPTO,
-  generateWallet,
-} from './lib/utils/crypto';
-import {useWebviewZkOperator} from './lib/webviewRpc/webviewZkOperator';
-import {
-  createClaim,
-  CreateStep,
-  ProviderName,
-} from '@reclaimprotocol/reclaim-node';
-import {WebViewRPCProvider} from './lib/webviewRpc/webviewRpc';
-import {WebViewCryptoProvider} from './lib/webviewRpc/webViewCryptoProvider';
-import {SHA3} from 'sha3';
-import {ZKOperator} from '@reclaimprotocol/circom-chacha20';
-import {reclaimprotocol} from '@reclaimprotocol/reclaim-sdk';
 import {Pressable} from 'react-native';
 import {backIconXml} from './assets/svgs';
 import {SvgXml} from 'react-native-svg';
@@ -74,164 +54,13 @@ type Props = {
   subTitle: string;
   cta: string;
   onSuccess: (proofs: any[]) => void;
-  onFail: (e: any) => void;
+  onFail: (e: Error) => void;
   context?: string;
 };
 
 const injection = `
   window.ReactNativeWebView.postMessage(document.documentElement.outerHTML)
 `;
-
-async function createClaimHttp(
-  zkOperator: ZKOperator,
-  claimParams: {
-    url: any;
-    loginUrl?: string;
-    loginCookies?: string[];
-    responseSelections: any;
-  },
-  cookie: string,
-  title: string,
-  responseMatch: string,
-  extractedParams: {},
-  onSuccess: {
-    (proofs: any[]): void;
-    (
-      arg0: {
-        onChainClaimId: string;
-        templateClaimId: string;
-        provider: string;
-        parameters: string;
-        chainId: number;
-        ownerPublicKey: string;
-        timestampS: string;
-        witnessAddresses: string[];
-        signatures: string[];
-        redactedParameters: string;
-        extractedParameterValues: {};
-        sessionId: any;
-        context: string;
-        epoch: number;
-        identifier: string;
-      }[],
-    ): void;
-  },
-  onFail: {(e: Error): void; (arg0: string): void},
-  setDisplayError: {
-    (value: React.SetStateAction<string>): void;
-    (arg0: string): void;
-  },
-  setDisplayProcess: {
-    (value: React.SetStateAction<string>): void;
-    (arg0: string): void;
-  },
-  theContext?: string,
-) {
-  setDisplayProcess('Intiating Claim Creation');
-  const claimName: ProviderName = 'http';
-  const params = {
-    method: 'GET',
-    responseSelections: [
-      {
-        responseMatch: responseMatch,
-      },
-    ],
-    url: claimParams.url,
-  };
-  // console.log('params', params);
-  const secretParams = {
-    cookieStr: cookie,
-  };
-  const {publicKey, privateKey} = await generateWallet();
-  const ephemeralWallet = getWalletFromPrivateKey(privateKey);
-  // console.log('ephemeralWallet', ephemeralWallet);
-  const hash = new SHA3(512);
-  const hashString = title;
-  hash.update(hashString);
-
-  const sessionId = '';
-  const context =
-    theContext ||
-    JSON.stringify({
-      contextAddress: ephemeralWallet.address,
-      contextMessage: hash.digest('hex'),
-      sessionId: '',
-    });
-
-  // console.log('This is the context', context);
-  const ownerPrivateKey = ephemeralWallet.privateKey;
-  const beacon = getBeacon();
-  try {
-    const response = await createClaim({
-      name: claimName,
-      params,
-      secretParams,
-      additionalConnectOpts: {
-        crypto: REACT_NATIVE_TLS_CRYPTO, // Be sure this is defined
-      },
-      sessionId,
-      context,
-      zkOperator,
-      beacon,
-      didUpdateCreateStep: (step: CreateStep) => {
-        if (step.name === 'creating') {
-          setDisplayProcess('Creating Claim');
-        }
-
-        if (step.name === 'witness-done') {
-          setDisplayProcess('Claim Created Successfully');
-        }
-        console.log('Step:', step.name);
-      },
-      ownerPrivateKey,
-    });
-
-    // console.log('Response:', response);
-    const reclaim = new reclaimprotocol.Reclaim();
-    const isProofsCorrect = await reclaim.verifyCorrectnessOfProofs('', [
-      {
-        templateClaimId: '0',
-        provider: 'http',
-        parameters: response.claimData.parameters,
-        ownerPublicKey: publicKey,
-        timestampS: String(response.claimData.timestampS),
-        witnessAddresses: response.witnessHosts,
-        signatures: response.signatures,
-        redactedParameters: response.claimData.parameters,
-        extractedParameterValues: extractedParams,
-        context: response.claimData.context,
-        epoch: response.claimData.epoch,
-        identifier: response.claimData.identifier,
-      },
-    ]);
-    if (isProofsCorrect) {
-      onSuccess([
-        {
-          onChainClaimId: '0',
-          templateClaimId: '0',
-          provider: 'http',
-          parameters: response.claimData.parameters,
-          chainId: 420,
-          ownerPublicKey: publicKey,
-          timestampS: String(response.claimData.timestampS),
-          witnessAddresses: response.witnessHosts,
-          signatures: response.signatures,
-          redactedParameters: response.claimData.parameters,
-          extractedParameterValues: extractedParams,
-          context: response.claimData.context,
-          epoch: response.claimData.epoch,
-          identifier: response.claimData.identifier,
-        },
-      ]);
-    } else {
-      onFail('Claim Creation Failed');
-    }
-    // console.log('isProofsCorrect', isProofsCorrect);
-  } catch (error) {
-    onFail(`Error generating claim: ${error}`);
-    setDisplayError(`Error generating claim: ${error}`);
-  }
-}
 
 export default function ReclaimHttps({
   requestedProofs,
@@ -251,9 +80,17 @@ export default function ReclaimHttps({
   let ScreenWidth = Dimensions.get('window').width;
   const [displayError, setDisplayError] = React.useState('');
   const [displayProcess, setDisplayProcess] = React.useState('');
+  const [extractedRegexState, setExtractedRegexState] = React.useState('');
   const [loading, setLoading] = React.useState(true);
+  const [address, setAddress] = React.useState('');
+  const [runonce, setRunonce] = React.useState(false);
+  const [publicKey, setPublicKey] = React.useState('');
+  const [privateKey, setPrivateKey] = React.useState('');
+  const [extractedParams, setExtractedParams] = React.useState({});
   const ref = React.useRef<WebView>();
-  const zkOperator = useWebviewZkOperator();
+  const walletRef = React.useRef<WebView>();
+  const claimRef = React.useRef<WebView>();
+
   function parseHtml(html: string, regexString: string) {
     // replace {{VARIABLE}} with (.*?), and save the variable names
     const variableNames: string[] = [];
@@ -291,6 +128,7 @@ export default function ReclaimHttps({
   const onClickListener = () => {
     // Add the action to be performed on button click
     setWebViewVisible(true);
+    console.log('Button clicked!');
   };
 
   function extractHostname(url: string): string {
@@ -317,176 +155,327 @@ export default function ReclaimHttps({
   };
 
   return (
-    <WebViewRPCProvider>
-      <WebViewCryptoProvider>
-        <View>
-          {webViewVisible ? (
-            <>
-              <View style={styles.providerHeaderContainer}>
-                <TouchableOpacity onPress={() => setWebViewVisible(false)}>
-                  <Pressable onPress={() => setWebViewVisible(false)}>
-                    <SvgXml xml={backIconXml} />
-                  </Pressable>
-                </TouchableOpacity>
+    <View>
+      {webViewVisible ? (
+        <>
+          <View style={styles.providerHeaderContainer}>
+            <TouchableOpacity onPress={() => setWebViewVisible(false)}>
+              <Pressable onPress={() => setWebViewVisible(false)}>
+                <SvgXml xml={backIconXml} />
+              </Pressable>
+            </TouchableOpacity>
 
-                <View style={styles.providerHeader}>
-                  <Text style={styles.providerHeading}>Sign in to verify</Text>
-                  <Text style={styles.providerSubheading}>
-                    {extractHostname(webViewUrl)}
-                  </Text>
-                </View>
-                {loading ? <LoadingSpinner /> : <Text> </Text>}
-              </View>
-              <WebView
-                source={{uri: webViewUrl}}
-                thirdPartyCookiesEnabled={true}
-                ref={ref}
-                setSupportMultipleWindows={false}
-                userAgent={
-                  Platform.OS === 'android'
-                    ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                    : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'
+            <View style={styles.providerHeader}>
+              <Text style={styles.providerHeading}>Sign in to verify</Text>
+              <Text style={styles.providerSubheading}>
+                {extractHostname(webViewUrl)}
+              </Text>
+            </View>
+            {loading ? <LoadingSpinner /> : <Text> </Text>}
+          </View>
+
+          <WebView
+            source={{uri: webViewUrl}}
+            thirdPartyCookiesEnabled={true}
+            ref={ref}
+            setSupportMultipleWindows={false}
+            userAgent={
+              Platform.OS === 'android'
+                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
+                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'
+            }
+            style={{height: ScreenHeight, width: ScreenWidth}}
+            onNavigationStateChange={async navState => {
+              if (runonce) {
+                return;
+              }
+              console.log('navState.url', navState.url);
+              if (navState.loading) {
+                return;
+              }
+              setLoading(false);
+              const res = await getCookies(requestedProofs[0].loginUrl);
+
+              const foundCookies: string[] = [];
+              const found = requestedProofs[0].loginCookies.every(hcookie => {
+                // eslint-disable-next-line no-extra-boolean-cast
+                if (!!res[hcookie]) {
+                  foundCookies.push(hcookie);
                 }
-                style={{height: ScreenHeight, width: ScreenWidth}}
-                onNavigationStateChange={async navState => {
-                  if (navState.loading) {
+
+                return !!res[hcookie];
+              });
+              if (found) {
+                try {
+                  const cookieStr = Object.values(res)
+                    .map(c => `${c.name}=${c.value}`)
+                    .join('; ');
+
+                  console.log('cookie', cookieStr);
+                  setCookie(cookieStr);
+                  setLoading(true);
+                  setWebViewUrl(requestedProofs[0].url);
+                  if (navState.url === requestedProofs[0].url) {
+                    ref.current?.injectJavaScript(injection);
                     return;
                   }
-                  setLoading(false);
-                  const res = await getCookies(requestedProofs[0].loginUrl);
+                } catch (error) {
+                  console.log('error getting cookies: ', error);
+                }
+              }
+            }}
+            onMessage={async event => {
+              console.log('webViewUrl', webViewUrl);
+              console.log('event data', event.nativeEvent.data);
 
-                  const foundCookies: string[] = [];
-                  const found = requestedProofs[0].loginCookies.every(
-                    cookie => {
-                      // eslint-disable-next-line no-extra-boolean-cast
-                      if (!!res[cookie]) {
-                        foundCookies.push(cookie);
-                      }
-
-                      return !!res[cookie];
-                    },
+              try {
+                // console.log(requestedProofs[0].responseSelections);
+                const theExtractedRegex =
+                  requestedProofs[0].responseSelections.map(
+                    responseSelection => ({
+                      ...responseSelection,
+                      responseMatch: parseHtml(
+                        event.nativeEvent.data,
+                        responseSelection.responseMatch,
+                      ).result,
+                    }),
                   );
-                  if (found) {
-                    try {
-                      const cookieStr = Object.values(res)
-                        .map(c => `${c.name}=${c.value}`)
-                        .join('; ');
 
-                      setCookie(cookieStr);
-                      setLoading(true);
-                      setWebViewUrl(requestedProofs[0].url);
-                      if (navState.url === requestedProofs[0].url) {
-                        ref.current?.injectJavaScript(injection);
-                        return;
-                      }
-                    } catch (error) {
-                      console.log('error getting cookies: ', error);
-                    }
-                  }
-                }}
-                onMessage={async event => {
-                  try {
-                    // console.log(requestedProofs[0].responseSelections);
-                    const extractedRegex =
-                      requestedProofs[0].responseSelections.map(
-                        responseSelection => ({
-                          ...responseSelection,
-                          responseMatch: parseHtml(
-                            event.nativeEvent.data,
-                            responseSelection.responseMatch,
-                          ).result,
-                        }),
-                      );
+                const theExtractedParams =
+                  requestedProofs[0].responseSelections.reduce(
+                    (pre, curr) => ({
+                      ...pre,
+                      ...parseHtml(event.nativeEvent.data, curr.responseMatch)
+                        .params,
+                    }),
+                    {},
+                  );
+                // setExtractedRegexState(extractedRegex[0].responseMatch);
+                // setExtractedParamsState(extractedParams[])
+                console.log('extractedParams', theExtractedParams);
+                console.log('extractedRegex', theExtractedRegex);
+                setExtractedParams(theExtractedParams);
+                // setWebViewVisible(false);
+                // createClaimHttp(
+                //   zkOperator,
+                //   requestedProofs[0],
+                //   cookie,
+                //   title,
+                //   extractedRegex[0].responseMatch,
+                //   extractedParams,
+                //   onSuccess,
+                //   onFail,
+                //   setDisplayError,
+                //   setDisplayProcess,
+                //   context,
+                // );
+                //injecthere
+                // const wallet = ethers.Wallet.createRandom();
+                setRunonce(true);
+                setDisplayProcess('Intiating Claim Creation');
+                setWebViewVisible(false);
+                return;
+              } catch (error) {
+                console.log('error getting cookies: ', error);
+              }
+            }}
+          />
+        </>
+      ) : (
+        <View style={styles.reclaimHttpsCard}>
+          <WebView
+            ref={walletRef}
+            onMessage={event => {
+              const {data} = event.nativeEvent;
+              const parsedWallet = JSON.parse(data);
+              setAddress(parsedWallet.address);
+              setPrivateKey(parsedWallet.privateKey);
+              setPublicKey(parsedWallet.publicKey);
+              console.log('Wallet Info', data);
+            }}
+            // Loading ethers library from CDN and an empty HTML body
+            source={{
+              html: '<script src="https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/ethers.js"></script><body></body>',
+            }}
+            onLoadEnd={() => {
+              if (!runonce) {
+                console.log('injected');
+                walletRef.current?.injectJavaScript(
+                  `
+                // This function will be called once ethers library is loaded
+                function createWallet() {
+                  var wallet = ethers.Wallet.createRandom();
+                  var address = wallet.address;
+                  var privateKey = wallet.privateKey;
+        
+                  // Get publicKey from privateKey
+                  var publicKey = ethers.utils.computePublicKey(privateKey, true); 
+        
+                  // Send the wallet info to React Native
+                  window.ReactNativeWebView.postMessage(JSON.stringify({ 
+                    address, 
+                    privateKey,
+                    publicKey
+                  }));
+                }
+                
+                // Checking if ethers is loaded already
+                if (window.ethers) {
+                  createWallet();
+                } else { 
+                  // If not, we'll add an event listener to call createEthereumWallet once the script is loaded.
+                  window.addEventListener('load', createWallet);
+                }
+                `,
+                );
+              }
+            }}
+            javaScriptEnabled
+            style={{width: 0, height: 0}} // Make the WebView invisible
+          />
+          <WebView
+            source={{uri: 'https://sdk-rpc.reclaimprotocol.org/'}}
+            thirdPartyCookiesEnabled={true}
+            ref={claimRef}
+            setSupportMultipleWindows={false}
+            userAgent={
+              Platform.OS === 'android'
+                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
+                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'
+            }
+            style={{height: 0, width: 0}}
+            onNavigationStateChange={async navState => {
+              if (navState.loading) {
+                return;
+              }
+              if (runonce) {
+                const claimRequest = {
+                  // lets the window know this is a request
+                  // intended for it
+                  channel: 'ReactNativeWebView',
+                  module: 'witness-sdk',
+                  // this is a random ID you generate,
+                  // use to match the response to the request
+                  id: '123',
+                  // the type of request you want to make
+                  type: 'createClaim',
+                  request: {
+                    name: 'http',
+                    params: {
+                      url: requestedProofs[0].url,
+                      method: 'GET',
+                      responseSelections: [
+                        {
+                          responseMatch: extractedRegexState,
+                        },
+                      ],
+                    },
+                    secretParams: {
+                      cookieStr: cookie,
+                    },
+                    ownerPrivateKey: privateKey,
+                  },
+                };
+                claimRef.current?.injectJavaScript(
+                  `window.postMessage(${JSON.stringify(claimRequest)})`,
+                );
+              }
+            }}
+            onMessage={async event => {
+              console.log('webViewUrl', webViewUrl);
+              console.log('event data', event.nativeEvent.data);
 
-                    const extractedParams =
-                      requestedProofs[0].responseSelections.reduce(
-                        (pre, curr) => ({
-                          ...pre,
-                          ...parseHtml(
-                            event.nativeEvent.data,
-                            curr.responseMatch,
-                          ).params,
-                        }),
-                        {},
-                      );
-                    setWebViewVisible(false);
-                    createClaimHttp(
-                      zkOperator,
-                      requestedProofs[0],
-                      cookie,
-                      title,
-                      extractedRegex[0].responseMatch,
-                      extractedParams,
-                      onSuccess,
-                      onFail,
-                      setDisplayError,
-                      setDisplayProcess,
-                      context,
-                    );
-                  } catch (error) {
-                    console.log('error getting cookies: ', error);
-                  }
-                }}
-              />
-            </>
-          ) : (
-            <View style={styles.reclaimHttpsCard}>
-              <View style={[styles.row, styles.rowFlexBox]}>
-                <View style={styles.rowInner}>
-                  <View style={styles.frameChildLayout}>
-                    <Image
-                      style={styles.icon}
-                      resizeMode="cover"
-                      source={{
-                        uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
-                      }}
-                    />
-                    <View style={styles.poweredByReclaimProtocolWrapper}>
-                      <Text
-                        style={[
-                          styles.poweredByReclaim,
-                          styles.proveYouHaveTypo,
-                        ]}>
-                        Powered by Reclaim Protocol
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
-                <Text style={[styles.googleLogin, styles.labelTypo]}>
-                  {title}
-                </Text>
-                <View style={styles.proveYouHaveAGoogleLoginWrapper}>
-                  <Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
-                    {subTitle}
+              console.log(event.nativeEvent.data);
+              const parsedData = JSON.parse(event.nativeEvent.data);
+              if (parsedData.type === 'createClaimStep') {
+                if (parsedData.step.name === 'creating') {
+                  setDisplayProcess('Creating Claim');
+                  console.log('creating the credntial');
+                }
+                if (parsedData.step.name === 'witness-done') {
+                  console.log('witnessdone the credntial');
+                  setDisplayProcess('Claim Created Successfully');
+                }
+              }
+
+              if (parsedData.type === 'createClaimDone') {
+                const response = parsedData.response;
+
+                onSuccess([
+                  {
+                    onChainClaimId: '0',
+                    templateClaimId: '0',
+                    provider: 'http',
+                    parameters: response.claimData.parameters,
+                    chainId: 420,
+                    ownerPublicKey: publicKey,
+                    timestampS: String(response.claimData.timestampS),
+                    witnessAddresses: response.witnessHosts,
+                    signatures: response.signatures,
+                    redactedParameters: response.claimData.parameters,
+                    extractedParameterValues: extractedParams,
+                    sessionId: response.claimData.sessionId,
+                    context: response.claimData.context,
+                    epoch: response.claimData.epoch,
+                    identifier: response.claimData.identifier,
+                  },
+                ]);
+                setWebViewVisible(false);
+              }
+
+              if (JSON.parse(event.nativeEvent.data).type === 'error') {
+                console.log(event.nativeEvent.data);
+              }
+
+              return;
+            }}
+          />
+          <View style={[styles.row, styles.rowFlexBox]}>
+            <View style={styles.rowInner}>
+              <View style={styles.frameChildLayout}>
+                <Image
+                  style={styles.icon}
+                  resizeMode="cover"
+                  source={{
+                    uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
+                  }}
+                />
+                <View style={styles.poweredByReclaimProtocolWrapper}>
+                  <Text
+                    style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
+                    Powered by Reclaim Protocol
                   </Text>
                 </View>
               </View>
-              <View style={[styles.buttonWrapper, styles.rowFlexBox]}>
-                {displayError ? (
-                  <Text style={[styles.displayError]}>{displayError}</Text>
-                ) : displayProcess ? (
-                  <Text style={[styles.displayProcess]}>{displayProcess}</Text>
-                ) : (
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={onClickListener}
-                    style={[styles.button, styles.buttonFlexBox]}>
-                    <View style={[styles.content, styles.buttonFlexBox]}>
-                      <Text style={[styles.label, styles.labelTypo]}>
-                        {cta}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-              </View>
             </View>
-          )}
+          </View>
+          <View style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
+            <Text style={[styles.googleLogin, styles.labelTypo]}>{title}</Text>
+            <View style={styles.proveYouHaveAGoogleLoginWrapper}>
+              <Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
+                {subTitle}
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.buttonWrapper, styles.rowFlexBox]}>
+            {displayError ? (
+              <Text style={[styles.displayError]}>{displayError}</Text>
+            ) : displayProcess ? (
+              <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={onClickListener}
+                style={[styles.button, styles.buttonFlexBox]}>
+                <View style={[styles.content, styles.buttonFlexBox]}>
+                  <Text style={[styles.label, styles.labelTypo]}>{cta}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </WebViewCryptoProvider>
-    </WebViewRPCProvider>
+      )}
+    </View>
   );
 }
 
