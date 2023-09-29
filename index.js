@@ -1,3 +1,4 @@
 import ReclaimHttps from './ReclaimHttps';
 import ReclaimAadhaar from './ReclaimAadhaar';
-export {ReclaimHttps, ReclaimAadhaar};
+import ReclaimKaggle from './ReclaimKaggle';
+export {ReclaimHttps, ReclaimAadhaar, ReclaimKaggle};
