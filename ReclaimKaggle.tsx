@@ -13,7 +13,7 @@ import { Pressable } from "react-native";
 import { backIconXml } from "./assets/svgs";
 import { SvgXml } from "react-native-svg";
 import LoadingSpinner from "./LoadingSpinner";
-import CookieManager from '@react-native-cookies/cookies';
+import CookieManager from "@react-native-cookies/cookies";
 
 const FontFamily = {
   qBBodyEmphasized: "Manrope-Bold",
@@ -41,11 +41,11 @@ const Border = {
   br_xs: 12,
 };
 
-const ANDROID = 'android';
-const KAGGLE_URL = 'https://www.kaggle.com/account/login'
-const REQ_COOKIES = ['__Host-KAGGLEID', 'CSRF-TOKEN', 'XSRF-TOKEN']
-const API_ENDPOINT = 'https://www.kaggle.com/api/i/users.UsersService/GetCurrentUser'
-
+const ANDROID = "android";
+const KAGGLE_URL = "https://www.kaggle.com/account/login";
+const REQ_COOKIES = ["__Host-KAGGLEID", "CSRF-TOKEN", "XSRF-TOKEN"];
+const API_ENDPOINT =
+  "https://www.kaggle.com/api/i/users.UsersService/GetCurrentUser";
 
 type Props = {
   title: string;
@@ -59,33 +59,36 @@ type Props = {
 const getKaggleUserDetails = async (cookieStr: string, xsrfToken: string) => {
   const headers = {
     cookie: cookieStr,
-    accept: 'application/json',
-    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-    'content-type': 'application/json',
-    'sec-fetch-mode': 'cors',
-    'x-xsrf-token': xsrfToken,
-
-  }
+    accept: "application/json",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+    "content-type": "application/json",
+    "sec-fetch-mode": "cors",
+    "x-xsrf-token": xsrfToken,
+  };
   const getResponse = async () => {
     try {
       const response = await fetch(API_ENDPOINT, {
         headers: headers,
-        method: 'POST',
-        body: JSON.stringify({ includeGroups: false, includeLogins: false })
-      })
-      const responseData = await response.json()
-      if(responseData?.userName === undefined || responseData?.userName === null || responseData?.userName === '') {
-        throw new Error('Missing Username')
+        method: "POST",
+        body: JSON.stringify({ includeGroups: false, includeLogins: false }),
+      });
+      const responseData = await response.json();
+      if (
+        responseData?.userName === undefined ||
+        responseData?.userName === null ||
+        responseData?.userName === ""
+      ) {
+        throw new Error("Missing Username");
       }
-      return responseData?.userName
+      return responseData?.userName;
     } catch (error) {
-      throw new Error('Request failed on fetchKaggleDetails')
+      throw new Error("Request failed on fetchKaggleDetails");
     }
-  }
+  };
   return {
-    userName: (await getResponse()) ?? '',
-  }
-}
+    userName: (await getResponse()) ?? "",
+  };
+};
 
 export default function ReclaimKaggle({
   title,
@@ -103,7 +106,6 @@ export default function ReclaimKaggle({
   const [xsrfToken, setXsrfToken] = React.useState("");
   const [displayProcess, setDisplayProcess] = React.useState("");
 
-
   const [loading, setLoading] = React.useState(true);
   const [address, setAddress] = React.useState("");
   const [runonce, setRunonce] = React.useState(false);
@@ -115,31 +117,41 @@ export default function ReclaimKaggle({
 
   const getCookies = (url?: string) => {
     if (!url) {
-      return CookieManager.getAll(true)
+      return CookieManager.getAll(true);
     }
-    return Platform.OS === 'ios' ? CookieManager.getAll(true) : CookieManager.get(url)
-  }
+    return Platform.OS === "ios"
+      ? CookieManager.getAll(true)
+      : CookieManager.get(url);
+  };
 
   const performGetCookies = async () => {
     try {
-      const resCookies = await getCookies()
-      const reqTokens = REQ_COOKIES.map((cookie) => resCookies[cookie])
+      const resCookies = await getCookies();
+      const reqTokens = REQ_COOKIES.map((cookie) => resCookies[cookie]);
 
       if (reqTokens.every((token) => !!token)) {
         // First 2 cookies are to be sent in the cookie header
-        const cookieVal = `${reqTokens[0].name}=${reqTokens[0].value}; ${reqTokens[1].name}=${reqTokens[1].value}`
-        setCookieStr(cookieVal)
-        setXsrfToken(reqTokens[2].value)
-        const kaggleInfo = await getKaggleUserDetails(cookieVal, reqTokens[2].value)
-        if(kaggleInfo.userName === '') {
-          throw new Error('Missing Username')
+        const cookieVal = `${reqTokens[0].name}=${reqTokens[0].value}; ${reqTokens[1].name}=${reqTokens[1].value}`;
+        setCookieStr(cookieVal);
+        setXsrfToken(reqTokens[2].value);
+        const kaggleInfo = await getKaggleUserDetails(
+          cookieVal,
+          reqTokens[2].value
+        );
+        if (kaggleInfo.userName === "") {
+          throw new Error("Missing Username");
+        } else {
+          setKaggleUsername(kaggleInfo.userName);
+          setLoading(true);
+          setRunonce(true);
+          setDisplayProcess("Intiating Claim Creation");
+          setWebViewVisible(false);
         }
-        setKaggleUsername(kaggleInfo.userName)
       }
     } catch (error) {
-      console.log('error', error)
+      console.log("error", error);
     }
-  } 
+  };
 
   const onClickListener = () => {
     // Add the action to be performed on button click
@@ -187,6 +199,10 @@ export default function ReclaimKaggle({
 
           <WebView
             source={{ uri: KAGGLE_URL }}
+            thirdPartyCookiesEnabled={true}
+            ref={ref}
+            setSupportMultipleWindows={false}
+            style={{ height: ScreenHeight, width: ScreenWidth }}
             userAgent={
               Platform.OS === ANDROID
                 ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
