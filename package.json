@@ -1,8 +1,8 @@
 {
   "name": "@reclaimprotocol/reclaim-react-native",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "React Native SDK for integrating Reclaim protocol with third party applications",
-  "main": "dist/index.js",
+  "main": "dist/index.ts",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
