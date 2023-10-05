@@ -200,6 +200,7 @@ export default function ReclaimKaggle({
           <WebView
             source={{ uri: KAGGLE_URL }}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={ref}
             setSupportMultipleWindows={false}
             style={{ height: ScreenHeight, width: ScreenWidth }}
@@ -223,6 +224,7 @@ export default function ReclaimKaggle({
       ) : (
         <View style={styles.ReclaimKaggleCard}>
           <WebView
+            // @ts-ignore
             ref={walletRef}
             onMessage={(event) => {
               const { data } = event.nativeEvent;
@@ -275,6 +277,7 @@ export default function ReclaimKaggle({
           <WebView
             source={{ uri: "https://sdk-rpc.reclaimprotocol.org/" }}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={claimRef}
             setSupportMultipleWindows={false}
             userAgent={

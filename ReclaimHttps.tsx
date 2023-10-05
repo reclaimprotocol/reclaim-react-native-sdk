@@ -178,6 +178,7 @@ export default function ReclaimHttps({
           <WebView
             source={{uri: webViewUrl}}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={ref}
             setSupportMultipleWindows={false}
             userAgent={
@@ -289,6 +290,7 @@ export default function ReclaimHttps({
       ) : (
         <View style={styles.reclaimHttpsCard}>
           <WebView
+            // @ts-ignore
             ref={walletRef}
             onMessage={event => {
               const {data} = event.nativeEvent;
@@ -341,6 +343,7 @@ export default function ReclaimHttps({
           <WebView
             source={{uri: 'https://sdk-rpc.reclaimprotocol.org/'}}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={claimRef}
             setSupportMultipleWindows={false}
             userAgent={

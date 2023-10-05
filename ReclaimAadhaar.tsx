@@ -133,6 +133,7 @@ export default function ReclaimAadhaar({
             injectedJavaScript={injection}
             source={{uri: 'https://myaadhaar.uidai.gov.in/'}}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={ref}
             onLoadEnd={() => {
               ref.current?.injectJavaScript(`
@@ -207,6 +208,7 @@ export default function ReclaimAadhaar({
       ) : (
         <View style={styles.ReclaimAadhaarCard}>
           <WebView
+            // @ts-ignore
             ref={walletRef}
             onMessage={event => {
               const {data} = event.nativeEvent;
@@ -259,6 +261,7 @@ export default function ReclaimAadhaar({
           <WebView
             source={{uri: 'https://sdk-rpc.reclaimprotocol.org/'}}
             thirdPartyCookiesEnabled={true}
+            // @ts-ignore
             ref={claimRef}
             setSupportMultipleWindows={false}
             userAgent={

@@ -1,3 +1,4 @@
+// @ts-ignore
 import {flex1} from '../lib/styles/common';
 import styled from 'styled-components/native';
 
