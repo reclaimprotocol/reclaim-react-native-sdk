@@ -72,7 +72,7 @@ const Border = {
 const injection = `
   window.ReactNativeWebView.postMessage(document.documentElement.outerHTML)
 `;
-function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, }) {
+function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const [cookie, setCookie] = React.useState('');
     const [webViewUrl, setWebViewUrl] = React.useState(requestedProofs[0].loginUrl);
@@ -143,7 +143,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
             ? cookies_1.default.getAll(true)
             : cookies_1.default.get(url);
     };
-    return (<react_native_1.View>
+    return (<react_native_1.View style={style}>
       {webViewVisible ? (<>
           <react_native_1.View style={styles.providerHeaderContainer}>
             <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
@@ -381,11 +381,11 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
                 uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
             }}/>
-                <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
+                {showShell === true && <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
                   <react_native_1.Text style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
                     Powered by Reclaim Protocol
                   </react_native_1.Text>
-                </react_native_1.View>
+                </react_native_1.View>}
               </react_native_1.View>
             </react_native_1.View>
           </react_native_1.View>
@@ -398,9 +398,17 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
             </react_native_1.View>
           </react_native_1.View>
           <react_native_1.View style={[styles.buttonWrapper, styles.rowFlexBox]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[styles.button, styles.buttonFlexBox]}>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[
+                    styles.button,
+                    styles.buttonFlexBox,
+                    { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                ]}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
-                  <react_native_1.Text style={[styles.label, styles.labelTypo]}>{cta}</react_native_1.Text>
+                  <react_native_1.Text style={[
+                    styles.label,
+                    styles.labelTypo,
+                    { color: buttonTextColor ? buttonTextColor : Color.white }
+                ]}>{cta}</react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.TouchableOpacity>)}
           </react_native_1.View>
@@ -408,6 +416,10 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
     </react_native_1.View>);
 }
 exports.default = ReclaimHttps;
+ReclaimHttps.defaultProps = {
+    showShell: true,
+    styles: {},
+};
 const ScreenHeight = react_native_2.Dimensions.get('window').height;
 const ScreenWidth = react_native_2.Dimensions.get('window').width;
 const styles = react_native_1.StyleSheet.create({
@@ -488,7 +500,6 @@ const styles = react_native_1.StyleSheet.create({
     label: {
         fontSize: FontSize.qBBodyEmphasized_size,
         lineHeight: 20,
-        color: Color.white,
         marginLeft: 4,
     },
     content: {
@@ -499,7 +510,6 @@ const styles = react_native_1.StyleSheet.create({
     },
     button: {
         borderRadius: Border.br_xs,
-        backgroundColor: Color.qBLightAccentColor,
         height: 48,
         flex: 1,
         overflow: 'hidden',

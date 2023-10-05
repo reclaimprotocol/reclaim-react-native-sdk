@@ -6,6 +6,8 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  ViewStyle,
+  StyleProp,
 } from 'react-native';
 import WebView from 'react-native-webview';
 import {Dimensions} from 'react-native';
@@ -56,6 +58,10 @@ type Props = {
   onSuccess: (proofs: any[]) => void;
   onFail: (e: Error) => void;
   context?: string;
+  showShell?: boolean;
+  buttonColor?: string;
+  buttonTextColor?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 const injection = `
@@ -70,6 +76,10 @@ export default function ReclaimHttps({
   context,
   onSuccess,
   onFail,
+  showShell,
+  buttonColor,
+  buttonTextColor,
+  style,
 }: Props) {
   const [webViewVisible, setWebViewVisible] = React.useState(false);
   const [cookie, setCookie] = React.useState('');
@@ -156,7 +166,7 @@ export default function ReclaimHttps({
   };
 
   return (
-    <View>
+    <View style={style}>
       {webViewVisible ? (
         <>
           <View style={styles.providerHeaderContainer}>
@@ -450,12 +460,12 @@ export default function ReclaimHttps({
                     uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
                   }}
                 />
-                <View style={styles.poweredByReclaimProtocolWrapper}>
+                {showShell === true && <View style={styles.poweredByReclaimProtocolWrapper}>
                   <Text
                     style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
                     Powered by Reclaim Protocol
                   </Text>
-                </View>
+                </View>}
               </View>
             </View>
           </View>
@@ -476,9 +486,17 @@ export default function ReclaimHttps({
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onClickListener}
-                style={[styles.button, styles.buttonFlexBox]}>
+                style={[
+                  styles.button, 
+                  styles.buttonFlexBox,
+                  { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                  ]}>
                 <View style={[styles.content, styles.buttonFlexBox]}>
-                  <Text style={[styles.label, styles.labelTypo]}>{cta}</Text>
+                  <Text style={[
+                    styles.label, 
+                    styles.labelTypo, 
+                    {color: buttonTextColor ? buttonTextColor : Color.white}
+                  ]}>{cta}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -487,6 +505,11 @@ export default function ReclaimHttps({
       )}
     </View>
   );
+}
+
+ReclaimHttps.defaultProps = {
+  showShell: true,
+  styles: {},
 }
 
 const ScreenHeight = Dimensions.get('window').height;
@@ -570,7 +593,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FontSize.qBBodyEmphasized_size,
     lineHeight: 20,
-    color: Color.white,
     marginLeft: 4,
   },
   content: {
@@ -581,7 +603,6 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: Border.br_xs,
-    backgroundColor: Color.qBLightAccentColor,
     height: 48,
     flex: 1,
     overflow: 'hidden',
