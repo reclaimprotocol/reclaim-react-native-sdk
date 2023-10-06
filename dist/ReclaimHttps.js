@@ -45,8 +45,8 @@ const svgs_1 = require("./assets/svgs");
 const react_native_svg_1 = require("react-native-svg");
 const LoadingSpinner_1 = __importDefault(require("./LoadingSpinner"));
 const FontFamily = {
-    qBBodyEmphasized: 'Manrope-Bold',
-    manropeMedium: 'Manrope-Medium',
+    qBBodyEmphasized: "Manrope-Bold",
+    manropeMedium: "Manrope-Medium",
 };
 /* font sizes */
 const FontSize = {
@@ -56,9 +56,9 @@ const FontSize = {
 };
 /* Colors */
 const Color = {
-    qBLightAccentColor: '#332fed',
-    white: '#fff',
-    black: '#000',
+    qBLightAccentColor: "#332fed",
+    white: "#fff",
+    black: "#000",
 };
 /* Paddings */
 const Padding = {
@@ -74,18 +74,18 @@ const injection = `
 `;
 function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
-    const [cookie, setCookie] = React.useState('');
+    const [cookie, setCookie] = React.useState("");
     const [webViewUrl, setWebViewUrl] = React.useState(requestedProofs[0].loginUrl);
-    let ScreenHeight = react_native_2.Dimensions.get('window').height;
-    let ScreenWidth = react_native_2.Dimensions.get('window').width;
-    const [displayError, setDisplayError] = React.useState('');
-    const [displayProcess, setDisplayProcess] = React.useState('');
-    const [extractedRegexState, setExtractedRegexState] = React.useState('');
+    let ScreenHeight = react_native_2.Dimensions.get("window").height;
+    let ScreenWidth = react_native_2.Dimensions.get("window").width;
+    const [displayError, setDisplayError] = React.useState("");
+    const [displayProcess, setDisplayProcess] = React.useState("");
+    const [extractedRegexState, setExtractedRegexState] = React.useState("");
     const [loading, setLoading] = React.useState(true);
-    const [address, setAddress] = React.useState('');
+    const [address, setAddress] = React.useState("");
     const [runonce, setRunonce] = React.useState(false);
-    const [publicKey, setPublicKey] = React.useState('');
-    const [privateKey, setPrivateKey] = React.useState('');
+    const [publicKey, setPublicKey] = React.useState("");
+    const [privateKey, setPrivateKey] = React.useState("");
     const [extractedParams, setExtractedParams] = React.useState({});
     const ref = React.useRef();
     const walletRef = React.useRef();
@@ -95,17 +95,17 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
         const variableNames = [];
         const realRegexString = regexString.replace(/{{(.*?)}}/g, (match, variableName) => {
             variableNames.push(variableName);
-            return '(.*?)';
+            return "(.*?)";
         });
         // create a RegExp object
-        const regex = new RegExp(realRegexString, 's');
+        const regex = new RegExp(realRegexString, "s");
         // run the regex on the html
         const match = html.match(regex);
         if (!match) {
             setWebViewVisible(false);
-            setDisplayError('Regex does not match');
-            onFail(Error('Regex does not match'));
-            throw Error('regex doesnt match');
+            setDisplayError("Regex does not match");
+            onFail(Error("Regex does not match"));
+            throw Error("regex doesnt match");
         }
         // replace the variable placeholders in the original regex string with their values
         let result = regexString;
@@ -124,22 +124,22 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
     function extractHostname(url) {
         let hostname;
         // Find & remove protocol (http, ftp, etc.) and get the hostname
-        if (url.indexOf('//') > -1) {
-            hostname = url.split('/')[2];
+        if (url.indexOf("//") > -1) {
+            hostname = url.split("/")[2];
         }
         else {
-            hostname = url.split('/')[0];
+            hostname = url.split("/")[0];
         }
         // find & remove port number
-        hostname = hostname.split(':')[0];
+        hostname = hostname.split(":")[0];
         // find & remove "?"
-        hostname = hostname.split('?')[0];
+        hostname = hostname.split("?")[0];
         // Remove www.
-        hostname = hostname.replace('www.', '');
+        hostname = hostname.replace("www.", "");
         return hostname;
     }
     const getCookies = (url) => {
-        return react_native_1.Platform.OS === 'ios'
+        return react_native_1.Platform.OS === "ios"
             ? cookies_1.default.getAll(true)
             : cookies_1.default.get(url);
     };
@@ -163,9 +163,9 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
 
           <react_native_webview_1.default source={{ uri: webViewUrl }} thirdPartyCookiesEnabled={true} 
         // @ts-ignore
-        ref={ref} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === 'android'
-                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+        ref={ref} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
+                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 if (runonce) {
                     return;
@@ -177,7 +177,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 setLoading(false);
                 const res = yield getCookies(requestedProofs[0].loginUrl);
                 const foundCookies = [];
-                const found = requestedProofs[0].loginCookies.every(hcookie => {
+                const found = requestedProofs[0].loginCookies.every((hcookie) => {
                     // eslint-disable-next-line no-extra-boolean-cast
                     if (!!res[hcookie]) {
                         foundCookies.push(hcookie);
@@ -187,8 +187,8 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 if (found) {
                     try {
                         const cookieStr = Object.values(res)
-                            .map(c => `${c.name}=${c.value}`)
-                            .join('; ');
+                            .map((c) => `${c.name}=${c.value}`)
+                            .join("; ");
                         // console.log('cookie', cookieStr);
                         setCookie(cookieStr);
                         setLoading(true);
@@ -199,9 +199,9 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                         }
                     }
                     catch (error) {
-                        setDisplayError('Error generating claim');
+                        setDisplayError("Error generating claim");
                         setWebViewVisible(false);
-                        onFail(Error('Error creating claim'));
+                        onFail(Error("Error creating claim"));
                     }
                 }
             })} onMessage={(event) => __awaiter(this, void 0, void 0, function* () {
@@ -209,7 +209,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 // console.log('event data', event.nativeEvent.data);
                 try {
                     // console.log(requestedProofs[0].responseSelections);
-                    const theExtractedRegex = requestedProofs[0].responseSelections.map(responseSelection => (Object.assign(Object.assign({}, responseSelection), { responseMatch: parseHtml(event.nativeEvent.data, responseSelection.responseMatch).result })));
+                    const theExtractedRegex = requestedProofs[0].responseSelections.map((responseSelection) => (Object.assign(Object.assign({}, responseSelection), { responseMatch: parseHtml(event.nativeEvent.data, responseSelection.responseMatch).result })));
                     const theExtractedParams = requestedProofs[0].responseSelections.reduce((pre, curr) => (Object.assign(Object.assign({}, pre), parseHtml(event.nativeEvent.data, curr.responseMatch)
                         .params)), {});
                     // setExtractedRegexState(extractedRegex[0].responseMatch);
@@ -234,20 +234,20 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     //injecthere
                     // const wallet = ethers.Wallet.createRandom();
                     setRunonce(true);
-                    setDisplayProcess('Intiating Claim Creation');
+                    setDisplayProcess("Intiating Claim Creation");
                     setWebViewVisible(false);
                     return;
                 }
                 catch (error) {
                     setWebViewVisible(false);
-                    setDisplayError('Claim Creation Failed');
-                    onFail(Error('Claim Creation Failed'));
+                    setDisplayError("Claim Creation Failed");
+                    onFail(Error("Claim Creation Failed"));
                 }
             })}/>
         </>) : (<react_native_1.View style={styles.reclaimHttpsCard}>
           <react_native_webview_1.default 
         // @ts-ignore
-        ref={walletRef} onMessage={event => {
+        ref={walletRef} onMessage={(event) => {
                 const { data } = event.nativeEvent;
                 const parsedWallet = JSON.parse(data);
                 setAddress(parsedWallet.address);
@@ -291,11 +291,11 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 }
             }} javaScriptEnabled style={{ width: 0, height: 0 }} // Make the WebView invisible
         />
-          <react_native_webview_1.default source={{ uri: 'https://sdk-rpc.reclaimprotocol.org/' }} thirdPartyCookiesEnabled={true} 
+          <react_native_webview_1.default source={{ uri: "https://sdk-rpc.reclaimprotocol.org/" }} thirdPartyCookiesEnabled={true} 
         // @ts-ignore
-        ref={claimRef} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === 'android'
-                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+        ref={claimRef} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
+                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
                 var _b;
                 if (navState.loading) {
                     return;
@@ -304,18 +304,18 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     const claimRequest = {
                         // lets the window know this is a request
                         // intended for it
-                        channel: 'ReactNativeWebView',
-                        module: 'witness-sdk',
+                        channel: "ReactNativeWebView",
+                        module: "witness-sdk",
                         // this is a random ID you generate,
                         // use to match the response to the request
-                        id: '123',
+                        id: "123",
                         // the type of request you want to make
-                        type: 'createClaim',
+                        type: "createClaim",
                         request: {
-                            name: 'http',
+                            name: "http",
                             params: {
                                 url: requestedProofs[0].url,
-                                method: 'GET',
+                                method: "GET",
                                 responseSelections: [
                                     {
                                         responseMatch: extractedRegexState,
@@ -335,23 +335,23 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 // console.log('event data', event.nativeEvent.data);
                 // console.log(event.nativeEvent.data);
                 const parsedData = JSON.parse(event.nativeEvent.data);
-                if (parsedData.type === 'createClaimStep') {
-                    if (parsedData.step.name === 'creating') {
-                        setDisplayProcess('Creating Claim');
+                if (parsedData.type === "createClaimStep") {
+                    if (parsedData.step.name === "creating") {
+                        setDisplayProcess("Creating Claim");
                         // console.log('creating the credntial');
                     }
-                    if (parsedData.step.name === 'witness-done') {
+                    if (parsedData.step.name === "witness-done") {
                         // console.log('witnessdone the credntial');
-                        setDisplayProcess('Claim Created Successfully');
+                        setDisplayProcess("Claim Created Successfully");
                     }
                 }
-                if (parsedData.type === 'createClaimDone') {
+                if (parsedData.type === "createClaimDone") {
                     const response = parsedData.response;
                     onSuccess([
                         {
-                            onChainClaimId: '0',
-                            templateClaimId: '0',
-                            provider: 'http',
+                            onChainClaimId: "0",
+                            templateClaimId: "0",
+                            provider: "http",
                             parameters: response.claimData.parameters,
                             chainId: 420,
                             ownerPublicKey: publicKey,
@@ -368,47 +368,71 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     ]);
                     setWebViewVisible(false);
                 }
-                if (JSON.parse(event.nativeEvent.data).type === 'error') {
-                    setDisplayError('Error generating claim');
+                if (JSON.parse(event.nativeEvent.data).type === "error") {
+                    setDisplayError("Error generating claim");
                     setWebViewVisible(false);
-                    onFail(Error('Claim Creation Failed'));
+                    onFail(Error("Claim Creation Failed"));
                 }
                 return;
             })}/>
-          <react_native_1.View style={[styles.row, styles.rowFlexBox]}>
-            <react_native_1.View style={styles.rowInner}>
-              <react_native_1.View style={styles.frameChildLayout}>
-                <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
-                uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
-            }}/>
-                {showShell === true && <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
-                  <react_native_1.Text style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
-                    Powered by Reclaim Protocol
-                  </react_native_1.Text>
-                </react_native_1.View>}
+
+          {showShell === true && (<>
+              <react_native_1.View style={[
+                    styles.row,
+                    styles.rowFlexBox,
+                    { padding: Padding.p_base },
+                ]}>
+                <react_native_1.View style={styles.rowInner}>
+                  <react_native_1.View style={styles.frameChildLayout}>
+                    <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
+                    uri: "https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png",
+                }}/>
+                    <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
+                      <react_native_1.Text style={[
+                    styles.poweredByReclaim,
+                    styles.proveYouHaveTypo,
+                ]}>
+                        Powered by Reclaim Protocol
+                      </react_native_1.Text>
+                    </react_native_1.View>
+                  </react_native_1.View>
+                </react_native_1.View>
               </react_native_1.View>
-            </react_native_1.View>
-          </react_native_1.View>
-          <react_native_1.View style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
-            <react_native_1.Text style={[styles.googleLogin, styles.labelTypo]}>{title}</react_native_1.Text>
-            <react_native_1.View style={styles.proveYouHaveAGoogleLoginWrapper}>
-              <react_native_1.Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
-                {subTitle}
-              </react_native_1.Text>
-            </react_native_1.View>
-          </react_native_1.View>
-          <react_native_1.View style={[styles.buttonWrapper, styles.rowFlexBox]}>
+              <react_native_1.View style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
+                <react_native_1.Text style={[styles.googleLogin, styles.labelTypo]}>
+                  {title}
+                </react_native_1.Text>
+                <react_native_1.View style={styles.proveYouHaveAGoogleLoginWrapper}>
+                  <react_native_1.Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
+                    {subTitle}
+                  </react_native_1.Text>
+                </react_native_1.View>
+              </react_native_1.View>
+            </>)}
+          <react_native_1.View style={[
+                styles.buttonWrapper,
+                styles.rowFlexBox,
+                { padding: showShell ? Padding.p_base : 0 },
+            ]}>
             {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[
                     styles.button,
                     styles.buttonFlexBox,
-                    { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                    {
+                        backgroundColor: buttonColor
+                            ? buttonColor
+                            : Color.qBLightAccentColor,
+                    },
                 ]}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
                   <react_native_1.Text style={[
                     styles.label,
                     styles.labelTypo,
-                    { color: buttonTextColor ? buttonTextColor : Color.white }
-                ]}>{cta}</react_native_1.Text>
+                    {
+                        color: buttonTextColor ? buttonTextColor : Color.white,
+                    },
+                ]}>
+                    {cta}
+                  </react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.TouchableOpacity>)}
           </react_native_1.View>
@@ -420,13 +444,12 @@ ReclaimHttps.defaultProps = {
     showShell: true,
     styles: {},
 };
-const ScreenHeight = react_native_2.Dimensions.get('window').height;
-const ScreenWidth = react_native_2.Dimensions.get('window').width;
+const ScreenHeight = react_native_2.Dimensions.get("window").height;
+const ScreenWidth = react_native_2.Dimensions.get("window").width;
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
-        padding: Padding.p_base,
-        flexDirection: 'row',
-        alignSelf: 'stretch',
+        flexDirection: "row",
+        alignSelf: "stretch",
     },
     frameChildLayout: {
         height: 40,
@@ -434,52 +457,52 @@ const styles = react_native_1.StyleSheet.create({
     },
     proveYouHaveTypo: {
         width: 322,
-        textAlign: 'left',
+        textAlign: "left",
         fontFamily: FontFamily.manropeMedium,
-        fontWeight: '500',
+        fontWeight: "500",
         lineHeight: 16,
         fontSize: FontSize.size_smi,
     },
     contentSpaceBlock: {
         paddingVertical: 0,
-        alignSelf: 'stretch',
+        alignSelf: "stretch",
     },
     labelTypo: {
         fontFamily: FontFamily.qBBodyEmphasized,
-        fontWeight: '700',
-        textAlign: 'left',
+        fontWeight: "700",
+        textAlign: "left",
     },
     buttonFlexBox: {
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     frameChild: {
         top: 0,
         left: 0,
-        position: 'absolute',
+        position: "absolute",
     },
     icon: {
         top: 6,
         left: 4,
         width: 30,
         height: 30,
-        position: 'absolute',
+        position: "absolute",
     },
     poweredByReclaim: {
-        color: 'rgba(198, 198, 198, 0.9)',
+        color: "rgba(198, 198, 198, 0.9)",
     },
     poweredByReclaimProtocolWrapper: {
         top: 13,
         left: 145,
         width: 180,
-        position: 'absolute',
+        position: "absolute",
     },
     rowInner: {
-        justifyContent: 'center',
+        justifyContent: "center",
         flex: 1,
     },
     row: {
-        justifyContent: 'flex-end',
+        justifyContent: "flex-end",
     },
     googleLogin: {
         fontSize: FontSize.qBH2_size,
@@ -487,15 +510,15 @@ const styles = react_native_1.StyleSheet.create({
         color: Color.black,
     },
     proveYouHave: {
-        color: 'rgba(0, 0, 0, 0.6)',
+        color: "rgba(0, 0, 0, 0.6)",
     },
     proveYouHaveAGoogleLoginWrapper: {
         marginTop: 8,
-        alignSelf: 'stretch',
+        alignSelf: "stretch",
     },
     googleLoginParent: {
         paddingHorizontal: Padding.p_base,
-        justifyContent: 'center',
+        justifyContent: "center",
     },
     label: {
         fontSize: FontSize.qBBodyEmphasized_size,
@@ -505,22 +528,22 @@ const styles = react_native_1.StyleSheet.create({
     content: {
         paddingHorizontal: Padding.p_xl,
         paddingVertical: 0,
-        alignSelf: 'stretch',
-        flexDirection: 'row',
+        alignSelf: "stretch",
+        flexDirection: "row",
     },
     button: {
         borderRadius: Border.br_xs,
         height: 48,
         flex: 1,
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     buttonWrapper: {
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     reclaimHttpsCard: {
         borderRadius: 16,
         backgroundColor: Color.white,
-        shadowColor: 'rgba(0, 0, 0, 0.08)',
+        shadowColor: "rgba(0, 0, 0, 0.08)",
         shadowOffset: {
             width: 0,
             height: 4,
@@ -528,28 +551,28 @@ const styles = react_native_1.StyleSheet.create({
         shadowRadius: 16,
         elevation: 16,
         shadowOpacity: 1,
-        borderStyle: 'solid',
-        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderStyle: "solid",
+        borderColor: "rgba(0, 0, 0, 0.1)",
         borderWidth: 1,
         width: 358,
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     container: {
         width: ScreenWidth,
         height: ScreenHeight,
     },
     displayError: {
-        color: 'rgba(255, 0, 0, 1)',
+        color: "rgba(255, 0, 0, 1)",
     },
     displayProcess: {
-        color: 'grey',
+        color: "grey",
     },
     topBar: {
         height: 50,
         width: ScreenWidth,
-        backgroundColor: '#eee',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "#eee",
+        justifyContent: "center",
+        alignItems: "center",
         paddingHorizontal: 10,
     },
     webView: {
@@ -557,29 +580,29 @@ const styles = react_native_1.StyleSheet.create({
         height: ScreenHeight - 50, // Subtract the height of the top bar
     },
     providerHeaderContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: 16,
         gap: 16,
     },
     providerHeader: {
-        flexDirection: 'column',
+        flexDirection: "column",
         flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
+        alignItems: "flex-start",
+        justifyContent: "center",
         height: 20,
         gap: 2,
     },
     providerHeading: {
         fontSize: 17,
         lineHeight: 20,
-        fontWeight: '700',
-        color: '#202124',
+        fontWeight: "700",
+        color: "#202124",
     },
     providerSubheading: {
         paddingLeft: 1,
         fontSize: 13,
         lineHeight: 16,
-        fontWeight: '500',
-        color: 'rgba(0, 0, 0, 0.6)',
+        fontWeight: "500",
+        color: "rgba(0, 0, 0, 0.6)",
     },
 });

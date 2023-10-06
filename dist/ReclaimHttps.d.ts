@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { ViewStyle, StyleProp } from 'react-native';
+import * as React from "react";
+import { ViewStyle, StyleProp } from "react-native";
 type Props = {
     requestedProofs: {
         url: string;
