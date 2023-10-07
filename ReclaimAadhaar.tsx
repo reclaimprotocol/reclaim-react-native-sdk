@@ -6,6 +6,8 @@ import {
   View,
   TouchableOpacity,
   Platform,
+  ViewStyle,
+  StyleProp,
 } from 'react-native';
 import WebView from 'react-native-webview';
 import {Dimensions} from 'react-native';
@@ -47,6 +49,10 @@ type Props = {
   onSuccess: (proofs: any[]) => void;
   onFail: (e: Error) => void;
   context?: string;
+  showShell?: boolean;
+  buttonColor?: string;
+  buttonTextColor?: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 const injection = `(function() {
@@ -67,6 +73,10 @@ export default function ReclaimAadhaar({
   cta,
   onSuccess,
   onFail,
+  showShell,
+  buttonColor,
+  buttonTextColor,
+  style,
 }: Props) {
   const [webViewVisible, setWebViewVisible] = React.useState(false);
   let ScreenHeight = Dimensions.get('window').height;
@@ -110,7 +120,7 @@ export default function ReclaimAadhaar({
   }
 
   return (
-    <View>
+    <View style={style}>
       {webViewVisible ? (
         <>
           <View style={styles.providerHeaderContainer}>
@@ -352,7 +362,15 @@ export default function ReclaimAadhaar({
               return;
             }}
           />
-          <View style={[styles.row, styles.rowFlexBox]}>
+          {showShell === true && (
+             <>
+          <View
+                 style={[
+                   styles.row,
+                   styles.rowFlexBox,
+                   { padding: Padding.p_base },
+                 ]}
+               >
             <View style={styles.rowInner}>
               <View style={styles.frameChildLayout}>
                 <Image
@@ -379,7 +397,12 @@ export default function ReclaimAadhaar({
               </Text>
             </View>
           </View>
-          <View style={[styles.buttonWrapper, styles.rowFlexBox]}>
+          </>)}
+          <View style={[
+               styles.buttonWrapper,
+               styles.rowFlexBox,
+               { padding: showShell ? Padding.p_base : 0 },
+             ]}>
             {displayError ? (
               <Text style={[styles.displayError]}>{displayError}</Text>
             ) : displayProcess ? (
@@ -388,9 +411,17 @@ export default function ReclaimAadhaar({
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onClickListener}
-                style={[styles.button, styles.buttonFlexBox]}>
+                style={[
+                  styles.button, 
+                  styles.buttonFlexBox,
+                  { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                  ]}>
                 <View style={[styles.content, styles.buttonFlexBox]}>
-                  <Text style={[styles.label, styles.labelTypo]}>{cta}</Text>
+                <Text style={[
+                     styles.label, 
+                     styles.labelTypo, 
+                     {color: buttonTextColor ? buttonTextColor : Color.white}
+                   ]}>{cta}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -401,12 +432,16 @@ export default function ReclaimAadhaar({
   );
 }
 
+ReclaimAadhaar.defaultProps = {
+  showShell: true,
+  styles: {},
+}
+
 const ScreenHeight = Dimensions.get('window').height;
 const ScreenWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   rowFlexBox: {
-    padding: Padding.p_base,
     flexDirection: 'row',
     alignSelf: 'stretch',
   },
@@ -482,7 +517,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: FontSize.qBBodyEmphasized_size,
     lineHeight: 20,
-    color: Color.white,
     marginLeft: 4,
   },
   content: {
@@ -493,7 +527,6 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: Border.br_xs,
-    backgroundColor: Color.qBLightAccentColor,
     height: 48,
     flex: 1,
     overflow: 'hidden',

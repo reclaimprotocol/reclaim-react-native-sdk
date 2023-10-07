@@ -79,7 +79,7 @@ const injection = `(function() {
 })();
 true; // note: this is required, or you'll sometimes get silent failures
 `;
-function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, }) {
+function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     let ScreenHeight = react_native_2.Dimensions.get('window').height;
     let ScreenWidth = react_native_2.Dimensions.get('window').width;
@@ -117,7 +117,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, }) {
         hostname = hostname.replace('www.', '');
         return hostname;
     }
-    return (<react_native_1.View>
+    return (<react_native_1.View style={style}>
       {webViewVisible ? (<>
           <react_native_1.View style={styles.providerHeaderContainer}>
             <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
@@ -324,12 +324,17 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, }) {
                 }
                 return;
             })}/>
-          <react_native_1.View style={[styles.row, styles.rowFlexBox]}>
+          {showShell === true && (<>
+          <react_native_1.View style={[
+                    styles.row,
+                    styles.rowFlexBox,
+                    { padding: Padding.p_base },
+                ]}>
             <react_native_1.View style={styles.rowInner}>
               <react_native_1.View style={styles.frameChildLayout}>
                 <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
-                uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
-            }}/>
+                    uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
+                }}/>
                 <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
                   <react_native_1.Text style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
                     Powered by Reclaim Protocol
@@ -346,10 +351,23 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, }) {
               </react_native_1.Text>
             </react_native_1.View>
           </react_native_1.View>
-          <react_native_1.View style={[styles.buttonWrapper, styles.rowFlexBox]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[styles.button, styles.buttonFlexBox]}>
+          </>)}
+          <react_native_1.View style={[
+                styles.buttonWrapper,
+                styles.rowFlexBox,
+                { padding: showShell ? Padding.p_base : 0 },
+            ]}>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[
+                    styles.button,
+                    styles.buttonFlexBox,
+                    { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                ]}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
-                  <react_native_1.Text style={[styles.label, styles.labelTypo]}>{cta}</react_native_1.Text>
+                <react_native_1.Text style={[
+                    styles.label,
+                    styles.labelTypo,
+                    { color: buttonTextColor ? buttonTextColor : Color.white }
+                ]}>{cta}</react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.TouchableOpacity>)}
           </react_native_1.View>
@@ -357,11 +375,14 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, }) {
     </react_native_1.View>);
 }
 exports.default = ReclaimAadhaar;
+ReclaimAadhaar.defaultProps = {
+    showShell: true,
+    styles: {},
+};
 const ScreenHeight = react_native_2.Dimensions.get('window').height;
 const ScreenWidth = react_native_2.Dimensions.get('window').width;
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
-        padding: Padding.p_base,
         flexDirection: 'row',
         alignSelf: 'stretch',
     },
@@ -437,7 +458,6 @@ const styles = react_native_1.StyleSheet.create({
     label: {
         fontSize: FontSize.qBBodyEmphasized_size,
         lineHeight: 20,
-        color: Color.white,
         marginLeft: 4,
     },
     content: {
@@ -448,7 +468,6 @@ const styles = react_native_1.StyleSheet.create({
     },
     button: {
         borderRadius: Border.br_xs,
-        backgroundColor: Color.qBLightAccentColor,
         height: 48,
         flex: 1,
         overflow: 'hidden',
