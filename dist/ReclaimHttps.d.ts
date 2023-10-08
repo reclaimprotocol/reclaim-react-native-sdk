@@ -24,7 +24,7 @@ declare function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, 
 declare namespace ReclaimHttps {
     var defaultProps: {
         showShell: boolean;
-        styles: {};
+        style: {};
     };
 }
 export default ReclaimHttps;

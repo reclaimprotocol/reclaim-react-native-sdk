@@ -44,8 +44,8 @@ const svgs_1 = require("./assets/svgs");
 const react_native_svg_1 = require("react-native-svg");
 const LoadingSpinner_1 = __importDefault(require("./LoadingSpinner"));
 const FontFamily = {
-    qBBodyEmphasized: 'Manrope-Bold',
-    manropeMedium: 'Manrope-Medium',
+    qBBodyEmphasized: "Manrope-Bold",
+    manropeMedium: "Manrope-Medium",
 };
 /* font sizes */
 const FontSize = {
@@ -55,9 +55,9 @@ const FontSize = {
 };
 /* Colors */
 const Color = {
-    qBLightAccentColor: '#332fed',
-    white: '#fff',
-    black: '#000',
+    qBLightAccentColor: "#332fed",
+    white: "#fff",
+    black: "#000",
 };
 /* Paddings */
 const Padding = {
@@ -81,17 +81,17 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
-    let ScreenHeight = react_native_2.Dimensions.get('window').height;
-    let ScreenWidth = react_native_2.Dimensions.get('window').width;
-    const [displayError, setDisplayError] = React.useState('');
-    const [aadhaarNumber, setAadhaarNumber] = React.useState('');
-    const [token, setToken] = React.useState('');
-    const [displayProcess, setDisplayProcess] = React.useState('');
+    let ScreenHeight = react_native_2.Dimensions.get("window").height;
+    let ScreenWidth = react_native_2.Dimensions.get("window").width;
+    const [displayError, setDisplayError] = React.useState("");
+    const [aadhaarNumber, setAadhaarNumber] = React.useState("");
+    const [token, setToken] = React.useState("");
+    const [displayProcess, setDisplayProcess] = React.useState("");
     const [loading, setLoading] = React.useState(true);
-    const [address, setAddress] = React.useState('');
+    const [address, setAddress] = React.useState("");
     const [runonce, setRunonce] = React.useState(false);
-    const [publicKey, setPublicKey] = React.useState('');
-    const [privateKey, setPrivateKey] = React.useState('');
+    const [publicKey, setPublicKey] = React.useState("");
+    const [privateKey, setPrivateKey] = React.useState("");
     const ref = React.useRef();
     const walletRef = React.useRef();
     const claimRef = React.useRef();
@@ -103,21 +103,21 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
     function extractHostname(url) {
         let hostname;
         // Find & remove protocol (http, ftp, etc.) and get the hostname
-        if (url.indexOf('//') > -1) {
-            hostname = url.split('/')[2];
+        if (url.indexOf("//") > -1) {
+            hostname = url.split("/")[2];
         }
         else {
-            hostname = url.split('/')[0];
+            hostname = url.split("/")[0];
         }
         // find & remove port number
-        hostname = hostname.split(':')[0];
+        hostname = hostname.split(":")[0];
         // find & remove "?"
-        hostname = hostname.split('?')[0];
+        hostname = hostname.split("?")[0];
         // Remove www.
-        hostname = hostname.replace('www.', '');
+        hostname = hostname.replace("www.", "");
         return hostname;
     }
-    return (<react_native_1.View style={style}>
+    return (<react_native_1.View>
       {webViewVisible ? (<>
           <react_native_1.View style={styles.providerHeaderContainer}>
             <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
@@ -129,13 +129,13 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
             <react_native_1.View style={styles.providerHeader}>
               <react_native_1.Text style={styles.providerHeading}>Sign in to verify</react_native_1.Text>
               <react_native_1.Text style={styles.providerSubheading}>
-                {extractHostname('https://myaadhaar.uidai.gov.in')}
+                {extractHostname("https://myaadhaar.uidai.gov.in")}
               </react_native_1.Text>
             </react_native_1.View>
             {loading ? <LoadingSpinner_1.default /> : <react_native_1.Text> </react_native_1.Text>}
           </react_native_1.View>
 
-          <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: 'https://myaadhaar.uidai.gov.in/' }} thirdPartyCookiesEnabled={true} 
+          <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: "https://myaadhaar.uidai.gov.in/" }} thirdPartyCookiesEnabled={true} 
         // @ts-ignore
         ref={ref} onLoadEnd={() => {
                 var _a;
@@ -145,9 +145,9 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                   if (logInButton) {
                       logInButton.click();
                     }`);
-            }} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === 'android'
-                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+            }} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
+                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
                 var _a;
                 if (runonce) {
                     return;
@@ -190,19 +190,19 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                     setAadhaarNumber(String(data.uid));
                 }
                 if (data.value) {
-                    if (data.value !== '') {
+                    if (data.value !== "") {
                         setToken(String(data.value));
                         setLoading(true);
                         setRunonce(true);
-                        setDisplayProcess('Intiating Claim Creation');
+                        setDisplayProcess("Intiating Claim Creation");
                         setWebViewVisible(false);
                     }
                 }
             })}/>
-        </>) : (<react_native_1.View style={styles.ReclaimAadhaarCard}>
+        </>) : (<react_native_1.View style={react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
           <react_native_webview_1.default 
         // @ts-ignore
-        ref={walletRef} onMessage={event => {
+        ref={walletRef} onMessage={(event) => {
                 const { data } = event.nativeEvent;
                 const parsedWallet = JSON.parse(data);
                 setAddress(parsedWallet.address);
@@ -246,11 +246,11 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                 }
             }} javaScriptEnabled style={{ width: 0, height: 0 }} // Make the WebView invisible
         />
-          <react_native_webview_1.default source={{ uri: 'https://sdk-rpc.reclaimprotocol.org/' }} thirdPartyCookiesEnabled={true} 
+          <react_native_webview_1.default source={{ uri: "https://sdk-rpc.reclaimprotocol.org/" }} thirdPartyCookiesEnabled={true} 
         // @ts-ignore
-        ref={claimRef} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === 'android'
-                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+        ref={claimRef} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
+                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
                 var _b;
                 if (navState.loading) {
                     return;
@@ -259,15 +259,15 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                     const claimRequest = {
                         // lets the window know this is a request
                         // intended for it
-                        channel: 'ReactNativeWebView',
-                        module: 'witness-sdk',
+                        channel: "ReactNativeWebView",
+                        module: "witness-sdk",
                         // this is a random ID you generate,
                         // use to match the response to the request
-                        id: '123',
+                        id: "123",
                         // the type of request you want to make
-                        type: 'createClaim',
+                        type: "createClaim",
                         request: {
-                            name: 'uidai-uid',
+                            name: "uidai-uid",
                             params: {
                                 uid: String(aadhaarNumber),
                             },
@@ -285,23 +285,23 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                 // console.log('event data', event.nativeEvent.data);
                 // console.log(event.nativeEvent.data);
                 const parsedData = JSON.parse(event.nativeEvent.data);
-                if (parsedData.type === 'createClaimStep') {
-                    if (parsedData.step.name === 'creating') {
-                        setDisplayProcess('Creating Claim');
+                if (parsedData.type === "createClaimStep") {
+                    if (parsedData.step.name === "creating") {
+                        setDisplayProcess("Creating Claim");
                         // console.log('creating the credntial');
                     }
-                    if (parsedData.step.name === 'witness-done') {
+                    if (parsedData.step.name === "witness-done") {
                         // console.log('witnessdone the credntial');
-                        setDisplayProcess('Claim Created Successfully');
+                        setDisplayProcess("Claim Created Successfully");
                     }
                 }
-                if (parsedData.type === 'createClaimDone') {
+                if (parsedData.type === "createClaimDone") {
                     const response = parsedData.response;
                     onSuccess([
                         {
-                            onChainClaimId: '0',
-                            templateClaimId: '0',
-                            provider: 'uidai-uid',
+                            onChainClaimId: "0",
+                            templateClaimId: "0",
+                            provider: "uidai-uid",
                             parameters: response.claimData.parameters,
                             chainId: 420,
                             ownerPublicKey: publicKey,
@@ -317,41 +317,46 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                     ]);
                     setWebViewVisible(false);
                 }
-                if (JSON.parse(event.nativeEvent.data).type === 'error') {
-                    setDisplayError('Error generating claim');
+                if (JSON.parse(event.nativeEvent.data).type === "error") {
+                    setDisplayError("Error generating claim");
                     setWebViewVisible(false);
-                    onFail(Error('Claim Creation Failed'));
+                    onFail(Error("Claim Creation Failed"));
                 }
                 return;
             })}/>
           {showShell === true && (<>
-          <react_native_1.View style={[
+              <react_native_1.View style={[
                     styles.row,
                     styles.rowFlexBox,
                     { padding: Padding.p_base },
                 ]}>
-            <react_native_1.View style={styles.rowInner}>
-              <react_native_1.View style={styles.frameChildLayout}>
-                <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
-                    uri: 'https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png',
+                <react_native_1.View style={styles.rowInner}>
+                  <react_native_1.View style={styles.frameChildLayout}>
+                    <react_native_1.Image style={styles.icon} resizeMode="cover" source={{
+                    uri: "https://reclaim-react-native-sdk.s3.ap-south-1.amazonaws.com/Logomark.png",
                 }}/>
-                <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
-                  <react_native_1.Text style={[styles.poweredByReclaim, styles.proveYouHaveTypo]}>
-                    Powered by Reclaim Protocol
+                    <react_native_1.View style={styles.poweredByReclaimProtocolWrapper}>
+                      <react_native_1.Text style={[
+                    styles.poweredByReclaim,
+                    styles.proveYouHaveTypo,
+                ]}>
+                        Powered by Reclaim Protocol
+                      </react_native_1.Text>
+                    </react_native_1.View>
+                  </react_native_1.View>
+                </react_native_1.View>
+              </react_native_1.View>
+              <react_native_1.View style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
+                <react_native_1.Text style={[styles.googleLogin, styles.labelTypo]}>
+                  {title}
+                </react_native_1.Text>
+                <react_native_1.View style={styles.proveYouHaveAGoogleLoginWrapper}>
+                  <react_native_1.Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
+                    {subTitle}
                   </react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.View>
-            </react_native_1.View>
-          </react_native_1.View>
-          <react_native_1.View style={[styles.googleLoginParent, styles.contentSpaceBlock]}>
-            <react_native_1.Text style={[styles.googleLogin, styles.labelTypo]}>{title}</react_native_1.Text>
-            <react_native_1.View style={styles.proveYouHaveAGoogleLoginWrapper}>
-              <react_native_1.Text style={[styles.proveYouHave, styles.proveYouHaveTypo]}>
-                {subTitle}
-              </react_native_1.Text>
-            </react_native_1.View>
-          </react_native_1.View>
-          </>)}
+            </>)}
           <react_native_1.View style={[
                 styles.buttonWrapper,
                 styles.rowFlexBox,
@@ -360,14 +365,22 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
             {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[
                     styles.button,
                     styles.buttonFlexBox,
-                    { backgroundColor: buttonColor ? buttonColor : Color.qBLightAccentColor }
+                    {
+                        backgroundColor: buttonColor
+                            ? buttonColor
+                            : Color.qBLightAccentColor,
+                    },
                 ]}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
-                <react_native_1.Text style={[
+                  <react_native_1.Text style={[
                     styles.label,
                     styles.labelTypo,
-                    { color: buttonTextColor ? buttonTextColor : Color.white }
-                ]}>{cta}</react_native_1.Text>
+                    {
+                        color: buttonTextColor ? buttonTextColor : Color.white,
+                    },
+                ]}>
+                    {cta}
+                  </react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.TouchableOpacity>)}
           </react_native_1.View>
@@ -377,14 +390,14 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
 exports.default = ReclaimAadhaar;
 ReclaimAadhaar.defaultProps = {
     showShell: true,
-    styles: {},
+    style: {},
 };
-const ScreenHeight = react_native_2.Dimensions.get('window').height;
-const ScreenWidth = react_native_2.Dimensions.get('window').width;
+const ScreenHeight = react_native_2.Dimensions.get("window").height;
+const ScreenWidth = react_native_2.Dimensions.get("window").width;
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
-        flexDirection: 'row',
-        alignSelf: 'stretch',
+        flexDirection: "row",
+        alignSelf: "stretch",
     },
     frameChildLayout: {
         height: 40,
@@ -392,52 +405,52 @@ const styles = react_native_1.StyleSheet.create({
     },
     proveYouHaveTypo: {
         width: 322,
-        textAlign: 'left',
+        textAlign: "left",
         fontFamily: FontFamily.manropeMedium,
-        fontWeight: '500',
+        fontWeight: "500",
         lineHeight: 16,
         fontSize: FontSize.size_smi,
     },
     contentSpaceBlock: {
         paddingVertical: 0,
-        alignSelf: 'stretch',
+        alignSelf: "stretch",
     },
     labelTypo: {
         fontFamily: FontFamily.qBBodyEmphasized,
-        fontWeight: '700',
-        textAlign: 'left',
+        fontWeight: "700",
+        textAlign: "left",
     },
     buttonFlexBox: {
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
     },
     frameChild: {
         top: 0,
         left: 0,
-        position: 'absolute',
+        position: "absolute",
     },
     icon: {
         top: 6,
         left: 4,
         width: 30,
         height: 30,
-        position: 'absolute',
+        position: "absolute",
     },
     poweredByReclaim: {
-        color: 'rgba(198, 198, 198, 0.9)',
+        color: "rgba(198, 198, 198, 0.9)",
     },
     poweredByReclaimProtocolWrapper: {
         top: 13,
         left: 145,
         width: 180,
-        position: 'absolute',
+        position: "absolute",
     },
     rowInner: {
-        justifyContent: 'center',
+        justifyContent: "center",
         flex: 1,
     },
     row: {
-        justifyContent: 'flex-end',
+        justifyContent: "flex-end",
     },
     googleLogin: {
         fontSize: FontSize.qBH2_size,
@@ -445,15 +458,15 @@ const styles = react_native_1.StyleSheet.create({
         color: Color.black,
     },
     proveYouHave: {
-        color: 'rgba(0, 0, 0, 0.6)',
+        color: "rgba(0, 0, 0, 0.6)",
     },
     proveYouHaveAGoogleLoginWrapper: {
         marginTop: 8,
-        alignSelf: 'stretch',
+        alignSelf: "stretch",
     },
     googleLoginParent: {
         paddingHorizontal: Padding.p_base,
-        justifyContent: 'center',
+        justifyContent: "center",
     },
     label: {
         fontSize: FontSize.qBBodyEmphasized_size,
@@ -463,22 +476,22 @@ const styles = react_native_1.StyleSheet.create({
     content: {
         paddingHorizontal: Padding.p_xl,
         paddingVertical: 0,
-        alignSelf: 'stretch',
-        flexDirection: 'row',
+        alignSelf: "stretch",
+        flexDirection: "row",
     },
     button: {
         borderRadius: Border.br_xs,
         height: 48,
         flex: 1,
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     buttonWrapper: {
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     ReclaimAadhaarCard: {
         borderRadius: 16,
         backgroundColor: Color.white,
-        shadowColor: 'rgba(0, 0, 0, 0.08)',
+        shadowColor: "rgba(0, 0, 0, 0.08)",
         shadowOffset: {
             width: 0,
             height: 4,
@@ -486,28 +499,28 @@ const styles = react_native_1.StyleSheet.create({
         shadowRadius: 16,
         elevation: 16,
         shadowOpacity: 1,
-        borderStyle: 'solid',
-        borderColor: 'rgba(0, 0, 0, 0.1)',
+        borderStyle: "solid",
+        borderColor: "rgba(0, 0, 0, 0.1)",
         borderWidth: 1,
         width: 358,
-        overflow: 'hidden',
+        overflow: "hidden",
     },
     container: {
         width: ScreenWidth,
         height: ScreenHeight,
     },
     displayError: {
-        color: 'rgba(255, 0, 0, 1)',
+        color: "rgba(255, 0, 0, 1)",
     },
     displayProcess: {
-        color: 'grey',
+        color: "grey",
     },
     topBar: {
         height: 50,
         width: ScreenWidth,
-        backgroundColor: '#eee',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "#eee",
+        justifyContent: "center",
+        alignItems: "center",
         paddingHorizontal: 10,
     },
     webView: {
@@ -515,29 +528,29 @@ const styles = react_native_1.StyleSheet.create({
         height: ScreenHeight - 50, // Subtract the height of the top bar
     },
     providerHeaderContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         padding: 16,
         gap: 16,
     },
     providerHeader: {
-        flexDirection: 'column',
+        flexDirection: "column",
         flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
+        alignItems: "flex-start",
+        justifyContent: "center",
         height: 20,
         gap: 2,
     },
     providerHeading: {
         fontSize: 17,
         lineHeight: 20,
-        fontWeight: '700',
-        color: '#202124',
+        fontWeight: "700",
+        color: "#202124",
     },
     providerSubheading: {
         paddingLeft: 1,
         fontSize: 13,
         lineHeight: 16,
-        fontWeight: '500',
-        color: 'rgba(0, 0, 0, 0.6)',
+        fontWeight: "500",
+        color: "rgba(0, 0, 0, 0.6)",
     },
 });

@@ -166,7 +166,7 @@ export default function ReclaimHttps({
   };
 
   return (
-    <View style={style}>
+    <View>
       {webViewVisible ? (
         <>
           <View style={styles.providerHeaderContainer}>
@@ -298,7 +298,7 @@ export default function ReclaimHttps({
           />
         </>
       ) : (
-        <View style={styles.reclaimHttpsCard}>
+        <View style={StyleSheet.flatten([styles.reclaimHttpsCard, style])}>
           <WebView
             // @ts-ignore
             ref={walletRef}
@@ -545,7 +545,7 @@ export default function ReclaimHttps({
 
 ReclaimHttps.defaultProps = {
   showShell: true,
-  styles: {},
+  style: {},
 };
 
 const ScreenHeight = Dimensions.get("window").height;

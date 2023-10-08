@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { ViewStyle, StyleProp } from 'react-native';
+import * as React from "react";
+import { ViewStyle, StyleProp } from "react-native";
 type Props = {
     title: string;
     subTitle: string;
@@ -16,7 +16,7 @@ declare function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showS
 declare namespace ReclaimAadhaar {
     var defaultProps: {
         showShell: boolean;
-        styles: {};
+        style: {};
     };
 }
 export default ReclaimAadhaar;

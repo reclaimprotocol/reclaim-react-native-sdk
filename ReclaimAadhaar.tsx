@@ -120,7 +120,7 @@ export default function ReclaimAadhaar({
   }
 
   return (
-    <View style={style}>
+    <View>
       {webViewVisible ? (
         <>
           <View style={styles.providerHeaderContainer}>
@@ -216,7 +216,7 @@ export default function ReclaimAadhaar({
           />
         </>
       ) : (
-        <View style={styles.ReclaimAadhaarCard}>
+        <View style={StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
           <WebView
             // @ts-ignore
             ref={walletRef}
@@ -456,7 +456,7 @@ export default function ReclaimAadhaar({
 
 ReclaimAadhaar.defaultProps = {
   showShell: true,
-  styles: {},
+  style: {},
 };
 
 const ScreenHeight = Dimensions.get("window").height;

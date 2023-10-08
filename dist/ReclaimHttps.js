@@ -143,7 +143,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
             ? cookies_1.default.getAll(true)
             : cookies_1.default.get(url);
     };
-    return (<react_native_1.View style={style}>
+    return (<react_native_1.View>
       {webViewVisible ? (<>
           <react_native_1.View style={styles.providerHeaderContainer}>
             <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
@@ -244,7 +244,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     onFail(Error("Claim Creation Failed"));
                 }
             })}/>
-        </>) : (<react_native_1.View style={styles.reclaimHttpsCard}>
+        </>) : (<react_native_1.View style={react_native_1.StyleSheet.flatten([styles.reclaimHttpsCard, style])}>
           <react_native_webview_1.default 
         // @ts-ignore
         ref={walletRef} onMessage={(event) => {
@@ -442,7 +442,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
 exports.default = ReclaimHttps;
 ReclaimHttps.defaultProps = {
     showShell: true,
-    styles: {},
+    style: {},
 };
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
