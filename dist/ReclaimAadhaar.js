@@ -118,46 +118,46 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
         return hostname;
     }
     return (<react_native_1.View>
-      {webViewVisible ? (<>
-          <react_native_1.View style={styles.providerHeaderContainer}>
-            <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
-              <react_native_3.Pressable onPress={() => setWebViewVisible(false)}>
-                <react_native_svg_1.SvgXml xml={svgs_1.backIconXml}/>
-              </react_native_3.Pressable>
-            </react_native_1.TouchableOpacity>
+      <react_native_1.Modal visible={webViewVisible} animationType="slide" transparent={false} onRequestClose={() => setWebViewVisible(false)}>
+        <react_native_1.View style={styles.providerHeaderContainer}>
+          <react_native_1.TouchableOpacity onPress={() => setWebViewVisible(false)}>
+            <react_native_3.Pressable onPress={() => setWebViewVisible(false)}>
+              <react_native_svg_1.SvgXml xml={svgs_1.backIconXml}/>
+            </react_native_3.Pressable>
+          </react_native_1.TouchableOpacity>
 
-            <react_native_1.View style={styles.providerHeader}>
-              <react_native_1.Text style={styles.providerHeading}>Sign in to verify</react_native_1.Text>
-              <react_native_1.Text style={styles.providerSubheading}>
-                {extractHostname("https://myaadhaar.uidai.gov.in")}
-              </react_native_1.Text>
-            </react_native_1.View>
-            {loading ? <LoadingSpinner_1.default /> : <react_native_1.Text> </react_native_1.Text>}
+          <react_native_1.View style={styles.providerHeader}>
+            <react_native_1.Text style={styles.providerHeading}>Sign in to verify</react_native_1.Text>
+            <react_native_1.Text style={styles.providerSubheading}>
+              {extractHostname("https://myaadhaar.uidai.gov.in")}
+            </react_native_1.Text>
           </react_native_1.View>
+          {loading ? <LoadingSpinner_1.default /> : <react_native_1.Text> </react_native_1.Text>}
+        </react_native_1.View>
 
-          <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: "https://myaadhaar.uidai.gov.in/" }} thirdPartyCookiesEnabled={true} 
-        // @ts-ignore
-        ref={ref} onLoadEnd={() => {
-                var _a;
-                (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
+        <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: "https://myaadhaar.uidai.gov.in/" }} thirdPartyCookiesEnabled={true} 
+    // @ts-ignore
+    ref={ref} onLoadEnd={() => {
+            var _a;
+            (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
       
                   var logInButton = document.querySelector('.button_btn__1dRFj');
                   if (logInButton) {
                       logInButton.click();
                     }`);
-            }} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
-                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
-                var _a;
-                if (runonce) {
-                    return;
-                }
-                // console.log('navState.url', navState.url);
-                if (navState.loading) {
-                    return;
-                }
-                setLoading(false);
-                (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
+        }} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
+            ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+            : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            if (runonce) {
+                return;
+            }
+            // console.log('navState.url', navState.url);
+            if (navState.loading) {
+                return;
+            }
+            setLoading(false);
+            (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
               (function() {
                 // Event listener function for the button click
                 function buttonClickListener(event) {
@@ -184,22 +184,23 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
               
                   
               true;`);
-            })} onMessage={(e) => __awaiter(this, void 0, void 0, function* () {
-                const data = JSON.parse(e.nativeEvent.data);
-                if (data.uid) {
-                    setAadhaarNumber(String(data.uid));
+        })} onMessage={(e) => __awaiter(this, void 0, void 0, function* () {
+            const data = JSON.parse(e.nativeEvent.data);
+            if (data.uid) {
+                setAadhaarNumber(String(data.uid));
+            }
+            if (data.value) {
+                if (data.value !== "") {
+                    setToken(String(data.value));
+                    setLoading(true);
+                    setRunonce(true);
+                    setDisplayProcess("Intiating Claim Creation");
+                    setWebViewVisible(false);
                 }
-                if (data.value) {
-                    if (data.value !== "") {
-                        setToken(String(data.value));
-                        setLoading(true);
-                        setRunonce(true);
-                        setDisplayProcess("Intiating Claim Creation");
-                        setWebViewVisible(false);
-                    }
-                }
-            })}/>
-        </>) : (<react_native_1.View style={react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
+            }
+        })}/>
+      </react_native_1.Modal>
+      {!webViewVisible && (<react_native_1.View style={react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
           <react_native_webview_1.default 
         // @ts-ignore
         ref={walletRef} onMessage={(event) => {

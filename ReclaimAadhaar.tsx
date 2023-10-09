@@ -8,6 +8,7 @@ import {
   Platform,
   ViewStyle,
   StyleProp,
+  Modal,
 } from "react-native";
 import WebView from "react-native-webview";
 import { Dimensions } from "react-native";
@@ -121,56 +122,60 @@ export default function ReclaimAadhaar({
 
   return (
     <View>
-      {webViewVisible ? (
-        <>
-          <View style={styles.providerHeaderContainer}>
-            <TouchableOpacity onPress={() => setWebViewVisible(false)}>
-              <Pressable onPress={() => setWebViewVisible(false)}>
-                <SvgXml xml={backIconXml} />
-              </Pressable>
-            </TouchableOpacity>
+      <Modal
+        visible={webViewVisible}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setWebViewVisible(false)}
+      >
+        <View style={styles.providerHeaderContainer}>
+          <TouchableOpacity onPress={() => setWebViewVisible(false)}>
+            <Pressable onPress={() => setWebViewVisible(false)}>
+              <SvgXml xml={backIconXml} />
+            </Pressable>
+          </TouchableOpacity>
 
-            <View style={styles.providerHeader}>
-              <Text style={styles.providerHeading}>Sign in to verify</Text>
-              <Text style={styles.providerSubheading}>
-                {extractHostname("https://myaadhaar.uidai.gov.in")}
-              </Text>
-            </View>
-            {loading ? <LoadingSpinner /> : <Text> </Text>}
+          <View style={styles.providerHeader}>
+            <Text style={styles.providerHeading}>Sign in to verify</Text>
+            <Text style={styles.providerSubheading}>
+              {extractHostname("https://myaadhaar.uidai.gov.in")}
+            </Text>
           </View>
+          {loading ? <LoadingSpinner /> : <Text> </Text>}
+        </View>
 
-          <WebView
-            injectedJavaScript={injection}
-            source={{ uri: "https://myaadhaar.uidai.gov.in/" }}
-            thirdPartyCookiesEnabled={true}
-            // @ts-ignore
-            ref={ref}
-            onLoadEnd={() => {
-              ref.current?.injectJavaScript(`
+        <WebView
+          injectedJavaScript={injection}
+          source={{ uri: "https://myaadhaar.uidai.gov.in/" }}
+          thirdPartyCookiesEnabled={true}
+          // @ts-ignore
+          ref={ref}
+          onLoadEnd={() => {
+            ref.current?.injectJavaScript(`
       
                   var logInButton = document.querySelector('.button_btn__1dRFj');
                   if (logInButton) {
                       logInButton.click();
                     }`);
-            }}
-            setSupportMultipleWindows={false}
-            userAgent={
-              Platform.OS === "android"
-                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
+          }}
+          setSupportMultipleWindows={false}
+          userAgent={
+            Platform.OS === "android"
+              ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+              : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
+          }
+          style={{ height: ScreenHeight, width: ScreenWidth }}
+          onNavigationStateChange={async (navState) => {
+            if (runonce) {
+              return;
             }
-            style={{ height: ScreenHeight, width: ScreenWidth }}
-            onNavigationStateChange={async (navState) => {
-              if (runonce) {
-                return;
-              }
-              // console.log('navState.url', navState.url);
-              if (navState.loading) {
-                return;
-              }
-              setLoading(false);
+            // console.log('navState.url', navState.url);
+            if (navState.loading) {
+              return;
+            }
+            setLoading(false);
 
-              ref.current?.injectJavaScript(`
+            ref.current?.injectJavaScript(`
               (function() {
                 // Event listener function for the button click
                 function buttonClickListener(event) {
@@ -197,25 +202,25 @@ export default function ReclaimAadhaar({
               
                   
               true;`);
-            }}
-            onMessage={async (e) => {
-              const data = JSON.parse(e.nativeEvent.data);
-              if (data.uid) {
-                setAadhaarNumber(String(data.uid));
+          }}
+          onMessage={async (e) => {
+            const data = JSON.parse(e.nativeEvent.data);
+            if (data.uid) {
+              setAadhaarNumber(String(data.uid));
+            }
+            if (data.value) {
+              if (data.value !== "") {
+                setToken(String(data.value));
+                setLoading(true);
+                setRunonce(true);
+                setDisplayProcess("Intiating Claim Creation");
+                setWebViewVisible(false);
               }
-              if (data.value) {
-                if (data.value !== "") {
-                  setToken(String(data.value));
-                  setLoading(true);
-                  setRunonce(true);
-                  setDisplayProcess("Intiating Claim Creation");
-                  setWebViewVisible(false);
-                }
-              }
-            }}
-          />
-        </>
-      ) : (
+            }
+          }}
+        />
+      </Modal>
+      {!webViewVisible && (
         <View style={StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
           <WebView
             // @ts-ignore
