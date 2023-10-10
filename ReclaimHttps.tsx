@@ -8,6 +8,7 @@ import {
   Platform,
   ViewStyle,
   StyleProp,
+  Modal,
 } from "react-native";
 import WebView from "react-native-webview";
 import { Dimensions } from "react-native";
@@ -167,137 +168,141 @@ export default function ReclaimHttps({
 
   return (
     <View>
-      {webViewVisible ? (
-        <>
-          <View style={styles.providerHeaderContainer}>
-            <TouchableOpacity onPress={() => setWebViewVisible(false)}>
-              <Pressable onPress={() => setWebViewVisible(false)}>
-                <SvgXml xml={backIconXml} />
-              </Pressable>
-            </TouchableOpacity>
+      <Modal
+        visible={webViewVisible}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setWebViewVisible(false)}
+      >
+        <View style={styles.providerHeaderContainer}>
+          <TouchableOpacity onPress={() => setWebViewVisible(false)}>
+            <Pressable onPress={() => setWebViewVisible(false)}>
+              <SvgXml xml={backIconXml} />
+            </Pressable>
+          </TouchableOpacity>
 
-            <View style={styles.providerHeader}>
-              <Text style={styles.providerHeading}>Sign in to verify</Text>
-              <Text style={styles.providerSubheading}>
-                {extractHostname(webViewUrl)}
-              </Text>
-            </View>
-            {loading ? <LoadingSpinner /> : <Text> </Text>}
+          <View style={styles.providerHeader}>
+            <Text style={styles.providerHeading}>Sign in to verify</Text>
+            <Text style={styles.providerSubheading}>
+              {extractHostname(webViewUrl)}
+            </Text>
           </View>
+          {loading ? <LoadingSpinner /> : <Text> </Text>}
+        </View>
 
-          <WebView
-            source={{ uri: webViewUrl }}
-            thirdPartyCookiesEnabled={true}
-            // @ts-ignore
-            ref={ref}
-            setSupportMultipleWindows={false}
-            userAgent={
-              Platform.OS === "android"
-                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
+        <WebView
+          source={{ uri: webViewUrl }}
+          thirdPartyCookiesEnabled={true}
+          // @ts-ignore
+          ref={ref}
+          setSupportMultipleWindows={false}
+          userAgent={
+            Platform.OS === "android"
+              ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
+              : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
+          }
+          style={{ height: ScreenHeight, width: ScreenWidth }}
+          onNavigationStateChange={async (navState) => {
+            if (runonce) {
+              return;
             }
-            style={{ height: ScreenHeight, width: ScreenWidth }}
-            onNavigationStateChange={async (navState) => {
-              if (runonce) {
-                return;
+            // console.log('navState.url', navState.url);
+            if (navState.loading) {
+              return;
+            }
+            setLoading(false);
+            const res = await getCookies(requestedProofs[0].loginUrl);
+
+            const foundCookies: string[] = [];
+            const found = requestedProofs[0].loginCookies.every((hcookie) => {
+              // eslint-disable-next-line no-extra-boolean-cast
+              if (!!res[hcookie]) {
+                foundCookies.push(hcookie);
               }
-              // console.log('navState.url', navState.url);
-              if (navState.loading) {
-                return;
-              }
-              setLoading(false);
-              const res = await getCookies(requestedProofs[0].loginUrl);
 
-              const foundCookies: string[] = [];
-              const found = requestedProofs[0].loginCookies.every((hcookie) => {
-                // eslint-disable-next-line no-extra-boolean-cast
-                if (!!res[hcookie]) {
-                  foundCookies.push(hcookie);
-                }
-
-                return !!res[hcookie];
-              });
-              if (found) {
-                try {
-                  const cookieStr = Object.values(res)
-                    .map((c) => `${c.name}=${c.value}`)
-                    .join("; ");
-
-                  // console.log('cookie', cookieStr);
-                  setCookie(cookieStr);
-                  setLoading(true);
-                  setWebViewUrl(requestedProofs[0].url);
-                  if (navState.url === requestedProofs[0].url) {
-                    ref.current?.injectJavaScript(injection);
-                    return;
-                  }
-                } catch (error) {
-                  setDisplayError("Error generating claim");
-                  setWebViewVisible(false);
-                  onFail(Error("Error creating claim"));
-                }
-              }
-            }}
-            onMessage={async (event) => {
-              // console.log('webViewUrl', webViewUrl);
-              // console.log('event data', event.nativeEvent.data);
-
+              return !!res[hcookie];
+            });
+            if (found) {
               try {
-                // console.log(requestedProofs[0].responseSelections);
-                const theExtractedRegex =
-                  requestedProofs[0].responseSelections.map(
-                    (responseSelection) => ({
-                      ...responseSelection,
-                      responseMatch: parseHtml(
-                        event.nativeEvent.data,
-                        responseSelection.responseMatch
-                      ).result,
-                    })
-                  );
+                const cookieStr = Object.values(res)
+                  .map((c) => `${c.name}=${c.value}`)
+                  .join("; ");
 
-                const theExtractedParams =
-                  requestedProofs[0].responseSelections.reduce(
-                    (pre, curr) => ({
-                      ...pre,
-                      ...parseHtml(event.nativeEvent.data, curr.responseMatch)
-                        .params,
-                    }),
-                    {}
-                  );
-                // setExtractedRegexState(extractedRegex[0].responseMatch);
-                // setExtractedParamsState(extractedParams[])
-                // console.log('extractedParams', theExtractedParams);
-                // console.log('extractedRegex', theExtractedRegex);
-                setExtractedParams(theExtractedParams);
-                // setWebViewVisible(false);
-                // createClaimHttp(
-                //   zkOperator,
-                //   requestedProofs[0],
-                //   cookie,
-                //   title,
-                //   extractedRegex[0].responseMatch,
-                //   extractedParams,
-                //   onSuccess,
-                //   onFail,
-                //   setDisplayError,
-                //   setDisplayProcess,
-                //   context,
-                // );
-                //injecthere
-                // const wallet = ethers.Wallet.createRandom();
-                setRunonce(true);
-                setDisplayProcess("Intiating Claim Creation");
-                setWebViewVisible(false);
-                return;
+                // console.log('cookie', cookieStr);
+                setCookie(cookieStr);
+                setLoading(true);
+                setWebViewUrl(requestedProofs[0].url);
+                if (navState.url === requestedProofs[0].url) {
+                  ref.current?.injectJavaScript(injection);
+                  return;
+                }
               } catch (error) {
+                setDisplayError("Error generating claim");
                 setWebViewVisible(false);
-                setDisplayError("Claim Creation Failed");
-                onFail(Error("Claim Creation Failed"));
+                onFail(Error("Error creating claim"));
               }
-            }}
-          />
-        </>
-      ) : (
+            }
+          }}
+          onMessage={async (event) => {
+            // console.log('webViewUrl', webViewUrl);
+            // console.log('event data', event.nativeEvent.data);
+
+            try {
+              // console.log(requestedProofs[0].responseSelections);
+              const theExtractedRegex =
+                requestedProofs[0].responseSelections.map(
+                  (responseSelection) => ({
+                    ...responseSelection,
+                    responseMatch: parseHtml(
+                      event.nativeEvent.data,
+                      responseSelection.responseMatch
+                    ).result,
+                  })
+                );
+
+              const theExtractedParams =
+                requestedProofs[0].responseSelections.reduce(
+                  (pre, curr) => ({
+                    ...pre,
+                    ...parseHtml(event.nativeEvent.data, curr.responseMatch)
+                      .params,
+                  }),
+                  {}
+                );
+              // setExtractedRegexState(extractedRegex[0].responseMatch);
+              // setExtractedParamsState(extractedParams[])
+              // console.log('extractedParams', theExtractedParams);
+              // console.log('extractedRegex', theExtractedRegex);
+              setExtractedParams(theExtractedParams);
+              // setWebViewVisible(false);
+              // createClaimHttp(
+              //   zkOperator,
+              //   requestedProofs[0],
+              //   cookie,
+              //   title,
+              //   extractedRegex[0].responseMatch,
+              //   extractedParams,
+              //   onSuccess,
+              //   onFail,
+              //   setDisplayError,
+              //   setDisplayProcess,
+              //   context,
+              // );
+              //injecthere
+              // const wallet = ethers.Wallet.createRandom();
+              setRunonce(true);
+              setDisplayProcess("Intiating Claim Creation");
+              setWebViewVisible(false);
+              return;
+            } catch (error) {
+              setWebViewVisible(false);
+              setDisplayError("Claim Creation Failed");
+              onFail(Error("Claim Creation Failed"));
+            }
+          }}
+        />
+      </Modal>
+      {!webViewVisible && (
         <View style={StyleSheet.flatten([styles.reclaimHttpsCard, style])}>
           <WebView
             // @ts-ignore
