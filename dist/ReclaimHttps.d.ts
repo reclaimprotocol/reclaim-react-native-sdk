@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ViewStyle, StyleProp } from "react-native";
+import { ViewStyle, StyleProp, TextStyle } from "react-native";
 type Props = {
     requestedProofs: {
         url: string;
@@ -16,15 +16,14 @@ type Props = {
     onFail: (e: Error) => void;
     context?: string;
     showShell?: boolean;
-    buttonColor?: string;
-    buttonTextColor?: string;
     style?: StyleProp<ViewStyle>;
+    buttonStyle?: StyleProp<ViewStyle>;
+    buttonTextStyle?: StyleProp<TextStyle>;
 };
-declare function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }: Props): React.JSX.Element;
+declare function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, }: Props): React.JSX.Element;
 declare namespace ReclaimHttps {
     var defaultProps: {
         showShell: boolean;
-        style: {};
     };
 }
 export default ReclaimHttps;

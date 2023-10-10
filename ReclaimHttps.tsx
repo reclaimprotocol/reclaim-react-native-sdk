@@ -9,6 +9,7 @@ import {
   ViewStyle,
   StyleProp,
   Modal,
+  TextStyle,
 } from "react-native";
 import WebView from "react-native-webview";
 import { Dimensions } from "react-native";
@@ -60,14 +61,17 @@ type Props = {
   onFail: (e: Error) => void;
   context?: string;
   showShell?: boolean;
-  buttonColor?: string;
-  buttonTextColor?: string;
   style?: StyleProp<ViewStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
+  buttonTextStyle?: StyleProp<TextStyle>;
 };
 
 const injection = `
   window.ReactNativeWebView.postMessage(document.documentElement.outerHTML)
 `;
+
+const ScreenHeight = Dimensions.get("window").height;
+const ScreenWidth = Dimensions.get("window").width;
 
 export default function ReclaimHttps({
   requestedProofs,
@@ -78,17 +82,28 @@ export default function ReclaimHttps({
   onSuccess,
   onFail,
   showShell,
-  buttonColor,
-  buttonTextColor,
   style,
+  buttonStyle,
+  buttonTextStyle,
 }: Props) {
+  const cardStyle = StyleSheet.flatten([styles.reclaimHttpsCard, style]);
+  const buttonStyleFlattened = StyleSheet.flatten([
+    styles.button,
+    styles.buttonFlexBox,
+    buttonStyle,
+  ]);
+  const buttonTextStyleFlattened = StyleSheet.flatten([
+    styles.label,
+    styles.labelTypo,
+    styles.content,
+    buttonTextStyle,
+  ]);
+
   const [webViewVisible, setWebViewVisible] = React.useState(false);
   const [cookie, setCookie] = React.useState("");
   const [webViewUrl, setWebViewUrl] = React.useState(
     requestedProofs[0].loginUrl
   );
-  let ScreenHeight = Dimensions.get("window").height;
-  let ScreenWidth = Dimensions.get("window").width;
   const [displayError, setDisplayError] = React.useState("");
   const [displayProcess, setDisplayProcess] = React.useState("");
   const [extractedRegexState, setExtractedRegexState] = React.useState("");
@@ -303,7 +318,7 @@ export default function ReclaimHttps({
         />
       </Modal>
       {!webViewVisible && (
-        <View style={StyleSheet.flatten([styles.reclaimHttpsCard, style])}>
+        <View style={cardStyle}>
           <WebView
             // @ts-ignore
             ref={walletRef}
@@ -516,28 +531,10 @@ export default function ReclaimHttps({
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onClickListener}
-                style={[
-                  styles.button,
-                  styles.buttonFlexBox,
-                  {
-                    backgroundColor: buttonColor
-                      ? buttonColor
-                      : Color.qBLightAccentColor,
-                  },
-                ]}
+                style={buttonStyleFlattened}
               >
-                <View style={[styles.content, styles.buttonFlexBox]}>
-                  <Text
-                    style={[
-                      styles.label,
-                      styles.labelTypo,
-                      {
-                        color: buttonTextColor ? buttonTextColor : Color.white,
-                      },
-                    ]}
-                  >
-                    {cta}
-                  </Text>
+                <View>
+                  <Text style={buttonTextStyleFlattened}>{cta}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -550,11 +547,7 @@ export default function ReclaimHttps({
 
 ReclaimHttps.defaultProps = {
   showShell: true,
-  style: {},
 };
-
-const ScreenHeight = Dimensions.get("window").height;
-const ScreenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   rowFlexBox: {
@@ -634,6 +627,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.qBBodyEmphasized_size,
     lineHeight: 20,
     marginLeft: 4,
+    color: Color.white,
   },
   content: {
     paddingHorizontal: Padding.p_xl,
@@ -643,6 +637,7 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: Border.br_xs,
+    backgroundColor: Color.qBLightAccentColor,
     height: 48,
     flex: 1,
     overflow: "hidden",
