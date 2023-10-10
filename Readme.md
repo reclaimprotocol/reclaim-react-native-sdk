@@ -76,6 +76,8 @@ function App(): JSX.Element {
           /*do something*/
           console.log('Error', e);
         }}
+        buttonStyle={{backgroundColor: 'black'}}
+        buttonTextStyle={{color: 'blue'}}
       />
     </SafeAreaView>
   );
@@ -95,3 +97,7 @@ Here's a description of each property ReclaimHttps accepts:
 - `cta`: The title of cta button.
 - `onSuccess`: A Function that returns proofs after success.
 - `onFail`: A Function that returns Error when the proof generation fails.
+- `showShell`: A boolean to show the shell of the component, default is true (Optional)
+- `style`: A style object to style the outer html of the component (Optional)
+- `buttonStyle`: A style object to style the button (Optional)
+- `buttonTextStyle`: A style object to style the button text (Optional)
