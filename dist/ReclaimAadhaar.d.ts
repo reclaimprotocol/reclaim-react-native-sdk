@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ViewStyle, StyleProp } from "react-native";
+import { ViewStyle, StyleProp, TextStyle } from "react-native";
 type Props = {
     title: string;
     subTitle: string;
@@ -8,15 +8,14 @@ type Props = {
     onFail: (e: Error) => void;
     context?: string;
     showShell?: boolean;
-    buttonColor?: string;
-    buttonTextColor?: string;
     style?: StyleProp<ViewStyle>;
+    buttonStyle?: StyleProp<ViewStyle>;
+    buttonTextStyle?: StyleProp<TextStyle>;
 };
-declare function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }: Props): React.JSX.Element;
+declare function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, }: Props): React.JSX.Element;
 declare namespace ReclaimAadhaar {
     var defaultProps: {
         showShell: boolean;
-        style: {};
     };
 }
 export default ReclaimAadhaar;

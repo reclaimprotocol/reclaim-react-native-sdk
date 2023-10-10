@@ -9,6 +9,7 @@ import {
   ViewStyle,
   StyleProp,
   Modal,
+  TextStyle,
 } from "react-native";
 import WebView from "react-native-webview";
 import { Dimensions } from "react-native";
@@ -51,9 +52,9 @@ type Props = {
   onFail: (e: Error) => void;
   context?: string;
   showShell?: boolean;
-  buttonColor?: string;
-  buttonTextColor?: string;
   style?: StyleProp<ViewStyle>;
+  buttonStyle?: StyleProp<ViewStyle>;
+  buttonTextStyle?: StyleProp<TextStyle>;
 };
 
 const injection = `(function() {
@@ -68,6 +69,9 @@ const injection = `(function() {
 true; // note: this is required, or you'll sometimes get silent failures
 `;
 
+const ScreenHeight = Dimensions.get("window").height;
+const ScreenWidth = Dimensions.get("window").width;
+
 export default function ReclaimAadhaar({
   title,
   subTitle,
@@ -75,13 +79,15 @@ export default function ReclaimAadhaar({
   onSuccess,
   onFail,
   showShell,
-  buttonColor,
-  buttonTextColor,
   style,
+  buttonStyle,
+  buttonTextStyle,
 }: Props) {
   const [webViewVisible, setWebViewVisible] = React.useState(false);
-  let ScreenHeight = Dimensions.get("window").height;
-  let ScreenWidth = Dimensions.get("window").width;
+  const cardStyle = StyleSheet.flatten([styles.ReclaimAadhaarCard, style])
+  const buttonStyleFlattened = StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
+  const buttonTextStyleFlattened = StyleSheet.flatten([styles.label, styles.labelTypo, styles.content, buttonTextStyle]);
+
   const [displayError, setDisplayError] = React.useState("");
   const [aadhaarNumber, setAadhaarNumber] = React.useState("");
   const [token, setToken] = React.useState("");
@@ -221,7 +227,7 @@ export default function ReclaimAadhaar({
         />
       </Modal>
       {!webViewVisible && (
-        <View style={StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
+        <View style={cardStyle}>
           <WebView
             // @ts-ignore
             ref={walletRef}
@@ -427,28 +433,10 @@ export default function ReclaimAadhaar({
               <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onClickListener}
-                style={[
-                  styles.button,
-                  styles.buttonFlexBox,
-                  {
-                    backgroundColor: buttonColor
-                      ? buttonColor
-                      : Color.qBLightAccentColor,
-                  },
-                ]}
+                style={buttonStyleFlattened}
               >
-                <View style={[styles.content, styles.buttonFlexBox]}>
-                  <Text
-                    style={[
-                      styles.label,
-                      styles.labelTypo,
-                      {
-                        color: buttonTextColor ? buttonTextColor : Color.white,
-                      },
-                    ]}
-                  >
-                    {cta}
-                  </Text>
+                <View>
+                  <Text style={buttonTextStyleFlattened}>{cta}</Text>
                 </View>
               </TouchableOpacity>
             )}
@@ -461,11 +449,7 @@ export default function ReclaimAadhaar({
 
 ReclaimAadhaar.defaultProps = {
   showShell: true,
-  style: {},
 };
-
-const ScreenHeight = Dimensions.get("window").height;
-const ScreenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   rowFlexBox: {
@@ -545,6 +529,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.qBBodyEmphasized_size,
     lineHeight: 20,
     marginLeft: 4,
+    color: Color.white,
   },
   content: {
     paddingHorizontal: Padding.p_xl,
@@ -554,6 +539,7 @@ const styles = StyleSheet.create({
   },
   button: {
     borderRadius: Border.br_xs,
+    backgroundColor: Color.qBLightAccentColor,
     height: 48,
     flex: 1,
     overflow: "hidden",

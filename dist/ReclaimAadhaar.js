@@ -79,10 +79,13 @@ const injection = `(function() {
 })();
 true; // note: this is required, or you'll sometimes get silent failures
 `;
-function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, buttonColor, buttonTextColor, style, }) {
+const ScreenHeight = react_native_2.Dimensions.get("window").height;
+const ScreenWidth = react_native_2.Dimensions.get("window").width;
+function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
-    let ScreenHeight = react_native_2.Dimensions.get("window").height;
-    let ScreenWidth = react_native_2.Dimensions.get("window").width;
+    const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
+    const buttonStyleFlattened = react_native_1.StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
+    const buttonTextStyleFlattened = react_native_1.StyleSheet.flatten([styles.label, styles.labelTypo, styles.content, buttonTextStyle]);
     const [displayError, setDisplayError] = React.useState("");
     const [aadhaarNumber, setAadhaarNumber] = React.useState("");
     const [token, setToken] = React.useState("");
@@ -200,7 +203,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
             }
         })}/>
       </react_native_1.Modal>
-      {!webViewVisible && (<react_native_1.View style={react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style])}>
+      {!webViewVisible && (<react_native_1.View style={cardStyle}>
           <react_native_webview_1.default 
         // @ts-ignore
         ref={walletRef} onMessage={(event) => {
@@ -363,25 +366,9 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
                 styles.rowFlexBox,
                 { padding: showShell ? Padding.p_base : 0 },
             ]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[
-                    styles.button,
-                    styles.buttonFlexBox,
-                    {
-                        backgroundColor: buttonColor
-                            ? buttonColor
-                            : Color.qBLightAccentColor,
-                    },
-                ]}>
-                <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
-                  <react_native_1.Text style={[
-                    styles.label,
-                    styles.labelTypo,
-                    {
-                        color: buttonTextColor ? buttonTextColor : Color.white,
-                    },
-                ]}>
-                    {cta}
-                  </react_native_1.Text>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
+                <react_native_1.View>
+                  <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
                 </react_native_1.View>
               </react_native_1.TouchableOpacity>)}
           </react_native_1.View>
@@ -391,10 +378,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, bu
 exports.default = ReclaimAadhaar;
 ReclaimAadhaar.defaultProps = {
     showShell: true,
-    style: {},
 };
-const ScreenHeight = react_native_2.Dimensions.get("window").height;
-const ScreenWidth = react_native_2.Dimensions.get("window").width;
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
         flexDirection: "row",
@@ -473,6 +457,7 @@ const styles = react_native_1.StyleSheet.create({
         fontSize: FontSize.qBBodyEmphasized_size,
         lineHeight: 20,
         marginLeft: 4,
+        color: Color.white,
     },
     content: {
         paddingHorizontal: Padding.p_xl,
@@ -482,6 +467,7 @@ const styles = react_native_1.StyleSheet.create({
     },
     button: {
         borderRadius: Border.br_xs,
+        backgroundColor: Color.qBLightAccentColor,
         height: 48,
         flex: 1,
         overflow: "hidden",
