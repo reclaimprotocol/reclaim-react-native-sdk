@@ -78,6 +78,9 @@ function App(): JSX.Element {
         }}
         buttonStyle={{backgroundColor: 'black'}}
         buttonTextStyle={{color: 'blue'}}
+        onStatusChange={(text: string) => {
+          console.log("from on Status change, the status is: ", text);
+        }}
       />
     </SafeAreaView>
   );
@@ -101,3 +104,4 @@ Here's a description of each property ReclaimHttps accepts:
 - `style`: A style object to style the outer html of the component (Optional)
 - `buttonStyle`: A style object to style the button (Optional)
 - `buttonTextStyle`: A style object to style the button text (Optional)
+- `onStatusChange`: A callback function that enables the component to inform you of changes in the status of claim creatio (Optional)
