@@ -107,7 +107,6 @@ export default function ReclaimAadhaar({
   const onClickListener = () => {
     // Add the action to be performed on button click
     setWebViewVisible(true);
-    // console.log('Button clicked!');
   };
 
   function extractHostname(url: string): string {
@@ -177,7 +176,6 @@ export default function ReclaimAadhaar({
             if (runonce) {
               return;
             }
-            // console.log('navState.url', navState.url);
             if (navState.loading) {
               return;
             }
@@ -240,7 +238,6 @@ export default function ReclaimAadhaar({
               setAddress(parsedWallet.address);
               setPrivateKey(parsedWallet.privateKey);
               setPublicKey(parsedWallet.publicKey);
-              // console.log('Wallet Info', data);
             }}
             // Loading ethers library from CDN and an empty HTML body
             source={{
@@ -248,7 +245,6 @@ export default function ReclaimAadhaar({
             }}
             onLoadEnd={() => {
               if (!runonce) {
-                // console.log('injected');
                 walletRef.current?.injectJavaScript(
                   `
                 // This function will be called once ethers library is loaded
@@ -327,19 +323,13 @@ export default function ReclaimAadhaar({
               }
             }}
             onMessage={async (event) => {
-              // console.log('webViewUrl', webViewUrl);
-              // console.log('event data', event.nativeEvent.data);
-
-              // console.log(event.nativeEvent.data);
               const parsedData = JSON.parse(event.nativeEvent.data);
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
                   onStatusChange("Creating Claim");
-                  // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
-                  // console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
                   onStatusChange("Claim Created Successfully");
                 }
@@ -455,7 +445,6 @@ export default function ReclaimAadhaar({
 
 ReclaimAadhaar.defaultProps = {
   showShell: true,
-  onStatusChange: (text: string) => {},
 };
 
 const styles = StyleSheet.create({

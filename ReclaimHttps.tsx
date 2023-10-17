@@ -158,7 +158,6 @@ export default function ReclaimHttps({
   const onClickListener = () => {
     // Add the action to be performed on button click
     setWebViewVisible(true);
-    // console.log('Button clicked!');
   };
 
   function extractHostname(url: string): string {
@@ -224,7 +223,6 @@ export default function ReclaimHttps({
             if (runonce) {
               return;
             }
-            // console.log('navState.url', navState.url);
             if (navState.loading) {
               return;
             }
@@ -246,7 +244,6 @@ export default function ReclaimHttps({
                   .map((c) => `${c.name}=${c.value}`)
                   .join("; ");
 
-                // console.log('cookie', cookieStr);
                 setCookie(cookieStr);
                 setLoading(true);
                 setWebViewUrl(requestedProofs[0].url);
@@ -263,22 +260,7 @@ export default function ReclaimHttps({
             }
           }}
           onMessage={async (event) => {
-            // console.log('webViewUrl', webViewUrl);
-            // console.log('event data', event.nativeEvent.data);
-
             try {
-              // console.log(requestedProofs[0].responseSelections);
-              const theExtractedRegex =
-                requestedProofs[0].responseSelections.map(
-                  (responseSelection) => ({
-                    ...responseSelection,
-                    responseMatch: parseHtml(
-                      event.nativeEvent.data,
-                      responseSelection.responseMatch
-                    ).result,
-                  })
-                );
-
               const theExtractedParams =
                 requestedProofs[0].responseSelections.reduce(
                   (pre, curr) => ({
@@ -288,27 +270,7 @@ export default function ReclaimHttps({
                   }),
                   {}
                 );
-              // setExtractedRegexState(extractedRegex[0].responseMatch);
-              // setExtractedParamsState(extractedParams[])
-              // console.log('extractedParams', theExtractedParams);
-              // console.log('extractedRegex', theExtractedRegex);
               setExtractedParams(theExtractedParams);
-              // setWebViewVisible(false);
-              // createClaimHttp(
-              //   zkOperator,
-              //   requestedProofs[0],
-              //   cookie,
-              //   title,
-              //   extractedRegex[0].responseMatch,
-              //   extractedParams,
-              //   onSuccess,
-              //   onFail,
-              //   setDisplayError,
-              //   setDisplayProcess,
-              //   context,
-              // );
-              //injecthere
-              // const wallet = ethers.Wallet.createRandom();
               setRunonce(true);
               setDisplayProcess("Intiating Claim Creation");
               onStatusChange("Intiating Claim Creation");
@@ -334,7 +296,6 @@ export default function ReclaimHttps({
               setAddress(parsedWallet.address);
               setPrivateKey(parsedWallet.privateKey);
               setPublicKey(parsedWallet.publicKey);
-              // console.log('Wallet Info', data);
             }}
             // Loading ethers library from CDN and an empty HTML body
             source={{
@@ -342,7 +303,6 @@ export default function ReclaimHttps({
             }}
             onLoadEnd={() => {
               if (!runonce) {
-                // console.log('injected');
                 walletRef.current?.injectJavaScript(
                   `
                 // This function will be called once ethers library is loaded
@@ -426,19 +386,13 @@ export default function ReclaimHttps({
               }
             }}
             onMessage={async (event) => {
-              // console.log('webViewUrl', webViewUrl);
-              // console.log('event data', event.nativeEvent.data);
-
-              // console.log(event.nativeEvent.data);
               const parsedData = JSON.parse(event.nativeEvent.data);
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
                   onStatusChange("Creating Claim");
-                  // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
-                  // console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
                   onStatusChange("Claim Created Successfully");
                 }
