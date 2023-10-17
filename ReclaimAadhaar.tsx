@@ -55,6 +55,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   buttonTextStyle?: StyleProp<TextStyle>;
+  onStatusChange?: (text: string) => void;
 };
 
 const injection = `(function() {
@@ -82,6 +83,7 @@ export default function ReclaimAadhaar({
   style,
   buttonStyle,
   buttonTextStyle,
+  onStatusChange = (text: string) => {},
 }: Props) {
   const [webViewVisible, setWebViewVisible] = React.useState(false);
   const cardStyle = StyleSheet.flatten([styles.ReclaimAadhaarCard, style])
@@ -220,6 +222,7 @@ export default function ReclaimAadhaar({
                 setLoading(true);
                 setRunonce(true);
                 setDisplayProcess("Intiating Claim Creation");
+                onStatusChange("Intiating Claim Creation");
                 setWebViewVisible(false);
               }
             }
@@ -332,11 +335,13 @@ export default function ReclaimAadhaar({
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
+                  onStatusChange("Creating Claim");
                   // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
                   // console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
+                  onStatusChange("Claim Created Successfully");
                 }
               }
 
@@ -366,6 +371,7 @@ export default function ReclaimAadhaar({
 
               if (JSON.parse(event.nativeEvent.data).type === "error") {
                 setDisplayError("Error generating claim");
+                onStatusChange("Error generating claim");
                 setWebViewVisible(false);
                 onFail(Error("Claim Creation Failed"));
               }
@@ -449,6 +455,7 @@ export default function ReclaimAadhaar({
 
 ReclaimAadhaar.defaultProps = {
   showShell: true,
+  onStatusChange: (text: string) => {},
 };
 
 const styles = StyleSheet.create({

@@ -19,8 +19,9 @@ type Props = {
     style?: StyleProp<ViewStyle>;
     buttonStyle?: StyleProp<ViewStyle>;
     buttonTextStyle?: StyleProp<TextStyle>;
+    onStatusChange?: (text: string) => void;
 };
-declare function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, }: Props): React.JSX.Element;
+declare function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange, }: Props): React.JSX.Element;
 declare namespace ReclaimHttps {
     var defaultProps: {
         showShell: boolean;

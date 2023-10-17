@@ -81,7 +81,7 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
-function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, }) {
+function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
     const buttonStyleFlattened = react_native_1.StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
@@ -198,6 +198,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                     setLoading(true);
                     setRunonce(true);
                     setDisplayProcess("Intiating Claim Creation");
+                    onStatusChange("Intiating Claim Creation");
                     setWebViewVisible(false);
                 }
             }
@@ -292,11 +293,13 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                 if (parsedData.type === "createClaimStep") {
                     if (parsedData.step.name === "creating") {
                         setDisplayProcess("Creating Claim");
+                        onStatusChange("Creating Claim");
                         // console.log('creating the credntial');
                     }
                     if (parsedData.step.name === "witness-done") {
                         // console.log('witnessdone the credntial');
                         setDisplayProcess("Claim Created Successfully");
+                        onStatusChange("Claim Created Successfully");
                     }
                 }
                 if (parsedData.type === "createClaimDone") {
@@ -323,6 +326,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                 }
                 if (JSON.parse(event.nativeEvent.data).type === "error") {
                     setDisplayError("Error generating claim");
+                    onStatusChange("Error generating claim");
                     setWebViewVisible(false);
                     onFail(Error("Claim Creation Failed"));
                 }
@@ -378,6 +382,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
 exports.default = ReclaimAadhaar;
 ReclaimAadhaar.defaultProps = {
     showShell: true,
+    onStatusChange: (text) => { },
 };
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {

@@ -64,6 +64,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   buttonTextStyle?: StyleProp<TextStyle>;
+  onStatusChange?: (text: string) => void;
 };
 
 const injection = `
@@ -85,6 +86,7 @@ export default function ReclaimHttps({
   style,
   buttonStyle,
   buttonTextStyle,
+  onStatusChange = (text: string) => {},
 }: Props) {
   const cardStyle = StyleSheet.flatten([styles.reclaimHttpsCard, style]);
   const buttonStyleFlattened = StyleSheet.flatten([
@@ -137,6 +139,7 @@ export default function ReclaimHttps({
     if (!match) {
       setWebViewVisible(false);
       setDisplayError("Regex does not match");
+      onStatusChange("Regex does not match");
       onFail(Error("Regex does not match"));
       throw Error("regex doesnt match");
     }
@@ -253,6 +256,7 @@ export default function ReclaimHttps({
                 }
               } catch (error) {
                 setDisplayError("Error generating claim");
+                onStatusChange("Error generating claim");
                 setWebViewVisible(false);
                 onFail(Error("Error creating claim"));
               }
@@ -307,11 +311,13 @@ export default function ReclaimHttps({
               // const wallet = ethers.Wallet.createRandom();
               setRunonce(true);
               setDisplayProcess("Intiating Claim Creation");
+              onStatusChange("Intiating Claim Creation");
               setWebViewVisible(false);
               return;
             } catch (error) {
               setWebViewVisible(false);
               setDisplayError("Claim Creation Failed");
+              onStatusChange("Claim Creation Failed");
               onFail(Error("Claim Creation Failed"));
             }
           }}
@@ -428,11 +434,13 @@ export default function ReclaimHttps({
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
+                  onStatusChange("Creating Claim");
                   // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
                   // console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
+                  onStatusChange("Claim Created Successfully");
                 }
               }
 
@@ -463,6 +471,7 @@ export default function ReclaimHttps({
 
               if (JSON.parse(event.nativeEvent.data).type === "error") {
                 setDisplayError("Error generating claim");
+                onStatusChange("Error generating claim");
                 setWebViewVisible(false);
                 onFail(Error("Claim Creation Failed"));
               }
