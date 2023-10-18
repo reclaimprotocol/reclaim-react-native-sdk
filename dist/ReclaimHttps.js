@@ -132,7 +132,6 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
     const onClickListener = () => {
         // Add the action to be performed on button click
         setWebViewVisible(true);
-        // console.log('Button clicked!');
     };
     function extractHostname(url) {
         let hostname;
@@ -183,7 +182,6 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
             if (runonce) {
                 return;
             }
-            // console.log('navState.url', navState.url);
             if (navState.loading) {
                 return;
             }
@@ -202,7 +200,6 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     const cookieStr = Object.values(res)
                         .map((c) => `${c.name}=${c.value}`)
                         .join("; ");
-                    // console.log('cookie', cookieStr);
                     setCookie(cookieStr);
                     setLoading(true);
                     setWebViewUrl(requestedProofs[0].url);
@@ -219,34 +216,10 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 }
             }
         })} onMessage={(event) => __awaiter(this, void 0, void 0, function* () {
-            // console.log('webViewUrl', webViewUrl);
-            // console.log('event data', event.nativeEvent.data);
             try {
-                // console.log(requestedProofs[0].responseSelections);
-                const theExtractedRegex = requestedProofs[0].responseSelections.map((responseSelection) => (Object.assign(Object.assign({}, responseSelection), { responseMatch: parseHtml(event.nativeEvent.data, responseSelection.responseMatch).result })));
                 const theExtractedParams = requestedProofs[0].responseSelections.reduce((pre, curr) => (Object.assign(Object.assign({}, pre), parseHtml(event.nativeEvent.data, curr.responseMatch)
                     .params)), {});
-                // setExtractedRegexState(extractedRegex[0].responseMatch);
-                // setExtractedParamsState(extractedParams[])
-                // console.log('extractedParams', theExtractedParams);
-                // console.log('extractedRegex', theExtractedRegex);
                 setExtractedParams(theExtractedParams);
-                // setWebViewVisible(false);
-                // createClaimHttp(
-                //   zkOperator,
-                //   requestedProofs[0],
-                //   cookie,
-                //   title,
-                //   extractedRegex[0].responseMatch,
-                //   extractedParams,
-                //   onSuccess,
-                //   onFail,
-                //   setDisplayError,
-                //   setDisplayProcess,
-                //   context,
-                // );
-                //injecthere
-                // const wallet = ethers.Wallet.createRandom();
                 setRunonce(true);
                 setDisplayProcess("Intiating Claim Creation");
                 onStatusChange("Intiating Claim Creation");
@@ -270,7 +243,6 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 setAddress(parsedWallet.address);
                 setPrivateKey(parsedWallet.privateKey);
                 setPublicKey(parsedWallet.publicKey);
-                // console.log('Wallet Info', data);
             }} 
         // Loading ethers library from CDN and an empty HTML body
         source={{
@@ -278,7 +250,6 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
             }} onLoadEnd={() => {
                 var _a;
                 if (!runonce) {
-                    // console.log('injected');
                     (_a = walletRef.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
                 // This function will be called once ethers library is loaded
                 function createWallet() {
@@ -339,6 +310,7 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                                     },
                                 ],
                             },
+                            context: context,
                             secretParams: {
                                 cookieStr: cookie,
                             },
@@ -348,18 +320,13 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                     (_b = claimRef.current) === null || _b === void 0 ? void 0 : _b.injectJavaScript(`window.postMessage(${JSON.stringify(claimRequest)})`);
                 }
             })} onMessage={(event) => __awaiter(this, void 0, void 0, function* () {
-                // console.log('webViewUrl', webViewUrl);
-                // console.log('event data', event.nativeEvent.data);
-                // console.log(event.nativeEvent.data);
                 const parsedData = JSON.parse(event.nativeEvent.data);
                 if (parsedData.type === "createClaimStep") {
                     if (parsedData.step.name === "creating") {
                         setDisplayProcess("Creating Claim");
                         onStatusChange("Creating Claim");
-                        // console.log('creating the credntial');
                     }
                     if (parsedData.step.name === "witness-done") {
-                        // console.log('witnessdone the credntial');
                         setDisplayProcess("Claim Created Successfully");
                         onStatusChange("Claim Created Successfully");
                     }

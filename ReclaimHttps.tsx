@@ -374,6 +374,7 @@ export default function ReclaimHttps({
                         },
                       ],
                     },
+                    context: context,
                     secretParams: {
                       cookieStr: cookie,
                     },

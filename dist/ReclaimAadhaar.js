@@ -81,7 +81,7 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
-function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
+function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
     const buttonStyleFlattened = react_native_1.StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
@@ -101,7 +101,6 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
     const onClickListener = () => {
         // Add the action to be performed on button click
         setWebViewVisible(true);
-        // console.log('Button clicked!');
     };
     function extractHostname(url) {
         let hostname;
@@ -155,7 +154,6 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
             if (runonce) {
                 return;
             }
-            // console.log('navState.url', navState.url);
             if (navState.loading) {
                 return;
             }
@@ -213,7 +211,6 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                 setAddress(parsedWallet.address);
                 setPrivateKey(parsedWallet.privateKey);
                 setPublicKey(parsedWallet.publicKey);
-                // console.log('Wallet Info', data);
             }} 
         // Loading ethers library from CDN and an empty HTML body
         source={{
@@ -221,7 +218,6 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
             }} onLoadEnd={() => {
                 var _a;
                 if (!runonce) {
-                    // console.log('injected');
                     (_a = walletRef.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
                 // This function will be called once ethers library is loaded
                 function createWallet() {
@@ -276,6 +272,7 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                             params: {
                                 uid: String(aadhaarNumber),
                             },
+                            context: context,
                             secretParams: {
                                 uid: String(aadhaarNumber),
                                 token: String(token),
@@ -286,18 +283,13 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
                     (_b = claimRef.current) === null || _b === void 0 ? void 0 : _b.injectJavaScript(`window.postMessage(${JSON.stringify(claimRequest)})`);
                 }
             })} onMessage={(event) => __awaiter(this, void 0, void 0, function* () {
-                // console.log('webViewUrl', webViewUrl);
-                // console.log('event data', event.nativeEvent.data);
-                // console.log(event.nativeEvent.data);
                 const parsedData = JSON.parse(event.nativeEvent.data);
                 if (parsedData.type === "createClaimStep") {
                     if (parsedData.step.name === "creating") {
                         setDisplayProcess("Creating Claim");
                         onStatusChange("Creating Claim");
-                        // console.log('creating the credntial');
                     }
                     if (parsedData.step.name === "witness-done") {
-                        // console.log('witnessdone the credntial');
                         setDisplayProcess("Claim Created Successfully");
                         onStatusChange("Claim Created Successfully");
                     }
@@ -382,7 +374,6 @@ function ReclaimAadhaar({ title, subTitle, cta, onSuccess, onFail, showShell, st
 exports.default = ReclaimAadhaar;
 ReclaimAadhaar.defaultProps = {
     showShell: true,
-    onStatusChange: (text) => { },
 };
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {

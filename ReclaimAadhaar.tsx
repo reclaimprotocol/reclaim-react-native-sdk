@@ -77,6 +77,7 @@ export default function ReclaimAadhaar({
   title,
   subTitle,
   cta,
+  context,
   onSuccess,
   onFail,
   showShell,
@@ -310,6 +311,7 @@ export default function ReclaimAadhaar({
                     params: {
                       uid: String(aadhaarNumber),
                     },
+                    context: context,
                     secretParams: {
                       uid: String(aadhaarNumber),
                       token: String(token),
