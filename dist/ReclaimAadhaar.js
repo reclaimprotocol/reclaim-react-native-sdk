@@ -81,11 +81,20 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
-function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
+function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, hideButton, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
-    const buttonStyleFlattened = react_native_1.StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
-    const buttonTextStyleFlattened = react_native_1.StyleSheet.flatten([styles.label, styles.labelTypo, styles.content, buttonTextStyle]);
+    const buttonStyleFlattened = react_native_1.StyleSheet.flatten([
+        styles.button,
+        styles.buttonFlexBox,
+        buttonStyle,
+    ]);
+    const buttonTextStyleFlattened = react_native_1.StyleSheet.flatten([
+        styles.label,
+        styles.labelTypo,
+        styles.content,
+        buttonTextStyle,
+    ]);
     const [displayError, setDisplayError] = React.useState("");
     const [aadhaarNumber, setAadhaarNumber] = React.useState("");
     const [token, setToken] = React.useState("");
@@ -357,23 +366,24 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                 </react_native_1.View>
               </react_native_1.View>
             </>)}
-          <react_native_1.View style={[
-                styles.buttonWrapper,
-                styles.rowFlexBox,
-                { padding: showShell ? Padding.p_base : 0 },
-            ]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
-                <react_native_1.View>
-                  <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
-                </react_native_1.View>
-              </react_native_1.TouchableOpacity>)}
-          </react_native_1.View>
+          {!hideButton && (<react_native_1.View style={[
+                    styles.buttonWrapper,
+                    styles.rowFlexBox,
+                    { padding: showShell ? Padding.p_base : 0 },
+                ]}>
+              {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
+                  <react_native_1.View>
+                    <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
+                  </react_native_1.View>
+                </react_native_1.TouchableOpacity>)}
+            </react_native_1.View>)}
         </react_native_1.View>)}
     </react_native_1.View>);
 }
 exports.default = ReclaimAadhaar;
 ReclaimAadhaar.defaultProps = {
     showShell: true,
+    hideButton: false,
 };
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
