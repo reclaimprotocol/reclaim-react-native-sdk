@@ -10,6 +10,7 @@ import {
   StyleProp,
   Modal,
   TextStyle,
+  ActivityIndicator,
 } from "react-native";
 import WebView from "react-native-webview";
 import { Dimensions } from "react-native";
@@ -61,6 +62,8 @@ type Props = {
   onFail: (e: Error) => void;
   context?: string;
   showShell?: boolean;
+  verifyingCta?: string;
+  verifiedCta?: string;
   style?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   buttonTextStyle?: StyleProp<TextStyle>;
@@ -83,6 +86,8 @@ export default function ReclaimHttps({
   onSuccess,
   onFail,
   showShell,
+  verifyingCta,
+  verifiedCta,
   style,
   buttonStyle,
   buttonTextStyle,
@@ -92,6 +97,10 @@ export default function ReclaimHttps({
   const buttonStyleFlattened = StyleSheet.flatten([
     styles.button,
     styles.buttonFlexBox,
+    buttonStyle,
+  ]);
+  const displayProcessFlatten = StyleSheet.flatten([
+    styles.displayProcess,
     buttonStyle,
   ]);
   const buttonTextStyleFlattened = StyleSheet.flatten([
@@ -272,7 +281,11 @@ export default function ReclaimHttps({
                 );
               setExtractedParams(theExtractedParams);
               setRunonce(true);
-              setDisplayProcess("Intiating Claim Creation");
+              if (verifyingCta) {
+                setDisplayProcess(verifyingCta);
+              } else {
+                setDisplayProcess("Intiating Claim Creation");
+              }
               onStatusChange("Intiating Claim Creation");
               setWebViewVisible(false);
               return;
@@ -390,11 +403,19 @@ export default function ReclaimHttps({
               const parsedData = JSON.parse(event.nativeEvent.data);
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
-                  setDisplayProcess("Creating Claim");
+                  if (verifyingCta) {
+                    setDisplayProcess(verifyingCta);
+                  } else {
+                    setDisplayProcess("Creating Claim");
+                  }
                   onStatusChange("Creating Claim");
                 }
                 if (parsedData.step.name === "witness-done") {
-                  setDisplayProcess("Claim Created Successfully");
+                  if (verifiedCta) {
+                    setDisplayProcess(verifiedCta);
+                  } else {
+                    setDisplayProcess("Claim Created Successfully");
+                  }
                   onStatusChange("Claim Created Successfully");
                 }
               }
@@ -490,7 +511,13 @@ export default function ReclaimHttps({
             {displayError ? (
               <Text style={[styles.displayError]}>{displayError}</Text>
             ) : displayProcess ? (
-              <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+              <View style={displayProcessFlatten}>
+                {displayProcess !== "Claim Created Successfully" &&
+                  displayProcess !== verifiedCta && (
+                    <ActivityIndicator size="small" color="black" />
+                  )}
+                <Text style={buttonTextStyleFlattened}>{displayProcess}</Text>
+              </View>
             ) : (
               <TouchableOpacity
                 activeOpacity={0.5}
@@ -594,9 +621,6 @@ const styles = StyleSheet.create({
     color: Color.white,
   },
   content: {
-    paddingHorizontal: Padding.p_xl,
-    paddingVertical: 0,
-    alignSelf: "stretch",
     flexDirection: "row",
   },
   button: {
@@ -604,6 +628,19 @@ const styles = StyleSheet.create({
     backgroundColor: Color.qBLightAccentColor,
     height: 48,
     flex: 1,
+    overflow: "hidden",
+  },
+  displayProcess: {
+    borderRadius: Border.br_xs,
+    backgroundColor: Color.qBLightAccentColor,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 48,
+    opacity: 0.3,
+    flex: 1,
+    flexDirection: "row",
+    gap: 5,
     overflow: "hidden",
   },
   buttonWrapper: {
@@ -632,9 +669,6 @@ const styles = StyleSheet.create({
   },
   displayError: {
     color: "rgba(255, 0, 0, 1)",
-  },
-  displayProcess: {
-    color: "grey",
   },
   topBar: {
     height: 50,

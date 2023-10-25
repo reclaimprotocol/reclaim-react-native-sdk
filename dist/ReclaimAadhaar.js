@@ -81,11 +81,24 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
-function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
+function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, verifyingCta, verifiedCta, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
-    const buttonStyleFlattened = react_native_1.StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
-    const buttonTextStyleFlattened = react_native_1.StyleSheet.flatten([styles.label, styles.labelTypo, styles.content, buttonTextStyle]);
+    const buttonStyleFlattened = react_native_1.StyleSheet.flatten([
+        styles.button,
+        styles.buttonFlexBox,
+        buttonStyle,
+    ]);
+    const displayProcessFlatten = react_native_1.StyleSheet.flatten([
+        styles.displayProcess,
+        buttonStyle,
+    ]);
+    const buttonTextStyleFlattened = react_native_1.StyleSheet.flatten([
+        styles.label,
+        styles.labelTypo,
+        styles.content,
+        buttonTextStyle,
+    ]);
     const [displayError, setDisplayError] = React.useState("");
     const [aadhaarNumber, setAadhaarNumber] = React.useState("");
     const [token, setToken] = React.useState("");
@@ -195,7 +208,12 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                     setToken(String(data.value));
                     setLoading(true);
                     setRunonce(true);
-                    setDisplayProcess("Intiating Claim Creation");
+                    if (verifyingCta) {
+                        setDisplayProcess(verifyingCta);
+                    }
+                    else {
+                        setDisplayProcess("Intiating Claim Creation");
+                    }
                     onStatusChange("Intiating Claim Creation");
                     setWebViewVisible(false);
                 }
@@ -286,11 +304,21 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                 const parsedData = JSON.parse(event.nativeEvent.data);
                 if (parsedData.type === "createClaimStep") {
                     if (parsedData.step.name === "creating") {
-                        setDisplayProcess("Creating Claim");
+                        if (verifyingCta) {
+                            setDisplayProcess(verifyingCta);
+                        }
+                        else {
+                            setDisplayProcess("Creating Claim");
+                        }
                         onStatusChange("Creating Claim");
                     }
                     if (parsedData.step.name === "witness-done") {
-                        setDisplayProcess("Claim Created Successfully");
+                        if (verifyingCta) {
+                            setDisplayProcess(verifyingCta);
+                        }
+                        else {
+                            setDisplayProcess("Creating Claim");
+                        }
                         onStatusChange("Claim Created Successfully");
                     }
                 }
@@ -362,7 +390,11 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                 styles.rowFlexBox,
                 { padding: showShell ? Padding.p_base : 0 },
             ]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.View style={displayProcessFlatten}>
+                {displayProcess !== "Claim Created Successfully" &&
+                    displayProcess !== verifiedCta && (<react_native_1.ActivityIndicator size="small" color="black"/>)}
+                <react_native_1.Text style={buttonTextStyleFlattened}>{displayProcess}</react_native_1.Text>
+              </react_native_1.View>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
                 <react_native_1.View>
                   <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
                 </react_native_1.View>
@@ -456,9 +488,6 @@ const styles = react_native_1.StyleSheet.create({
         color: Color.white,
     },
     content: {
-        paddingHorizontal: Padding.p_xl,
-        paddingVertical: 0,
-        alignSelf: "stretch",
         flexDirection: "row",
     },
     button: {
@@ -466,6 +495,19 @@ const styles = react_native_1.StyleSheet.create({
         backgroundColor: Color.qBLightAccentColor,
         height: 48,
         flex: 1,
+        overflow: "hidden",
+    },
+    displayProcess: {
+        borderRadius: Border.br_xs,
+        backgroundColor: Color.qBLightAccentColor,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: 48,
+        opacity: 0.3,
+        flex: 1,
+        flexDirection: "row",
+        gap: 5,
         overflow: "hidden",
     },
     buttonWrapper: {
@@ -494,9 +536,6 @@ const styles = react_native_1.StyleSheet.create({
     },
     displayError: {
         color: "rgba(255, 0, 0, 1)",
-    },
-    displayProcess: {
-        color: "grey",
     },
     topBar: {
         height: 50,
