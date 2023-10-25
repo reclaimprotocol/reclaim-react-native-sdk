@@ -52,7 +52,6 @@ type Props = {
   onFail: (e: Error) => void;
   context?: string;
   showShell?: boolean;
-  hideButton?: boolean;
   style?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   buttonTextStyle?: StyleProp<TextStyle>;
@@ -82,25 +81,15 @@ export default function ReclaimAadhaar({
   onSuccess,
   onFail,
   showShell,
-  hideButton,
   style,
   buttonStyle,
   buttonTextStyle,
   onStatusChange = (text: string) => {},
 }: Props) {
   const [webViewVisible, setWebViewVisible] = React.useState(false);
-  const cardStyle = StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
-  const buttonStyleFlattened = StyleSheet.flatten([
-    styles.button,
-    styles.buttonFlexBox,
-    buttonStyle,
-  ]);
-  const buttonTextStyleFlattened = StyleSheet.flatten([
-    styles.label,
-    styles.labelTypo,
-    styles.content,
-    buttonTextStyle,
-  ]);
+  const cardStyle = StyleSheet.flatten([styles.ReclaimAadhaarCard, style])
+  const buttonStyleFlattened = StyleSheet.flatten([styles.button, styles.buttonFlexBox, buttonStyle]);
+  const buttonTextStyleFlattened = StyleSheet.flatten([styles.label, styles.labelTypo, styles.content, buttonTextStyle]);
 
   const [displayError, setDisplayError] = React.useState("");
   const [aadhaarNumber, setAadhaarNumber] = React.useState("");
@@ -427,31 +416,29 @@ export default function ReclaimAadhaar({
               </View>
             </>
           )}
-          {!hideButton && (
-            <View
-              style={[
-                styles.buttonWrapper,
-                styles.rowFlexBox,
-                { padding: showShell ? Padding.p_base : 0 },
-              ]}
-            >
-              {displayError ? (
-                <Text style={[styles.displayError]}>{displayError}</Text>
-              ) : displayProcess ? (
-                <Text style={[styles.displayProcess]}>{displayProcess}</Text>
-              ) : (
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={onClickListener}
-                  style={buttonStyleFlattened}
-                >
-                  <View>
-                    <Text style={buttonTextStyleFlattened}>{cta}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
+          <View
+            style={[
+              styles.buttonWrapper,
+              styles.rowFlexBox,
+              { padding: showShell ? Padding.p_base : 0 },
+            ]}
+          >
+            {displayError ? (
+              <Text style={[styles.displayError]}>{displayError}</Text>
+            ) : displayProcess ? (
+              <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={onClickListener}
+                style={buttonStyleFlattened}
+              >
+                <View>
+                  <Text style={buttonTextStyleFlattened}>{cta}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -460,7 +447,6 @@ export default function ReclaimAadhaar({
 
 ReclaimAadhaar.defaultProps = {
   showShell: true,
-  hideButton: false,
 };
 
 const styles = StyleSheet.create({

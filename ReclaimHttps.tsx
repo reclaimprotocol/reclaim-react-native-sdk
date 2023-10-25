@@ -61,7 +61,6 @@ type Props = {
   onFail: (e: Error) => void;
   context?: string;
   showShell?: boolean;
-  hideButton?: boolean;
   style?: StyleProp<ViewStyle>;
   buttonStyle?: StyleProp<ViewStyle>;
   buttonTextStyle?: StyleProp<TextStyle>;
@@ -84,7 +83,6 @@ export default function ReclaimHttps({
   onSuccess,
   onFail,
   showShell,
-  hideButton,
   style,
   buttonStyle,
   buttonTextStyle,
@@ -482,31 +480,29 @@ export default function ReclaimHttps({
               </View>
             </>
           )}
-          {!hideButton && (
-            <View
-              style={[
-                styles.buttonWrapper,
-                styles.rowFlexBox,
-                { padding: showShell ? Padding.p_base : 0 },
-              ]}
-            >
-              {displayError ? (
-                <Text style={[styles.displayError]}>{displayError}</Text>
-              ) : displayProcess ? (
-                <Text style={[styles.displayProcess]}>{displayProcess}</Text>
-              ) : (
-                <TouchableOpacity
-                  activeOpacity={0.5}
-                  onPress={onClickListener}
-                  style={buttonStyleFlattened}
-                >
-                  <View>
-                    <Text style={buttonTextStyleFlattened}>{cta}</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
+          <View
+            style={[
+              styles.buttonWrapper,
+              styles.rowFlexBox,
+              { padding: showShell ? Padding.p_base : 0 },
+            ]}
+          >
+            {displayError ? (
+              <Text style={[styles.displayError]}>{displayError}</Text>
+            ) : displayProcess ? (
+              <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={onClickListener}
+                style={buttonStyleFlattened}
+              >
+                <View>
+                  <Text style={buttonTextStyleFlattened}>{cta}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       )}
     </View>
@@ -515,7 +511,6 @@ export default function ReclaimHttps({
 
 ReclaimHttps.defaultProps = {
   showShell: true,
-  hideButton: false,
 };
 
 const styles = StyleSheet.create({

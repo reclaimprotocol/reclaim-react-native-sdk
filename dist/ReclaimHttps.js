@@ -74,7 +74,7 @@ const injection = `
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
-function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, hideButton, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
+function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSuccess, onFail, showShell, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const cardStyle = react_native_1.StyleSheet.flatten([styles.reclaimHttpsCard, style]);
     const buttonStyleFlattened = react_native_1.StyleSheet.flatten([
         styles.button,
@@ -396,24 +396,23 @@ function ReclaimHttps({ requestedProofs, title, subTitle, cta, context, onSucces
                 </react_native_1.View>
               </react_native_1.View>
             </>)}
-          {!hideButton && (<react_native_1.View style={[
-                    styles.buttonWrapper,
-                    styles.rowFlexBox,
-                    { padding: showShell ? Padding.p_base : 0 },
-                ]}>
-              {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
-                  <react_native_1.View>
-                    <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
-                  </react_native_1.View>
-                </react_native_1.TouchableOpacity>)}
-            </react_native_1.View>)}
+          <react_native_1.View style={[
+                styles.buttonWrapper,
+                styles.rowFlexBox,
+                { padding: showShell ? Padding.p_base : 0 },
+            ]}>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={buttonStyleFlattened}>
+                <react_native_1.View>
+                  <react_native_1.Text style={buttonTextStyleFlattened}>{cta}</react_native_1.Text>
+                </react_native_1.View>
+              </react_native_1.TouchableOpacity>)}
+          </react_native_1.View>
         </react_native_1.View>)}
     </react_native_1.View>);
 }
 exports.default = ReclaimHttps;
 ReclaimHttps.defaultProps = {
     showShell: true,
-    hideButton: false,
 };
 const styles = react_native_1.StyleSheet.create({
     rowFlexBox: {
