@@ -110,7 +110,7 @@ export default function ReclaimAadhaar({
   ]);
 
   const [displayError, setDisplayError] = React.useState("");
-  // const [aadhaarNumber, setAadhaarNumber] = React.useState("");
+  const [aadhaarNumber, setAadhaarNumber] = React.useState("");
   const [aadhaarState, setAadhaarState] = React.useState("");
   const [token, setToken] = React.useState("");
   const [displayProcess, setDisplayProcess] = React.useState("");
@@ -124,10 +124,52 @@ export default function ReclaimAadhaar({
   const walletRef = React.useRef<WebView>();
   const claimRef = React.useRef<WebView>();
 
+
+
+
+
   const onClickListener = () => {
     // Add the action to be performed on button click
     setWebViewVisible(true);
   };
+
+  React.useEffect(() => {
+    if(aadhaarNumber && token)
+    {
+      const getDetails = async () => {
+        const API_ENDPOINT = 'https://tathya.uidai.gov.in/ssupService/api/demographics/request/v4/profile'
+      
+        const headers = {
+          Accept: 'application/json, text/plain, */*',
+          'Accept-Language': 'en_IN',
+          Authorization: token,
+          Connection: 'close',
+          'Content-Type': 'application/json',
+          appID: 'SSUP',
+          'Accept-Encoding': 'gzip, deflate, br',
+        }
+      
+      
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify({ uidNumber: aadhaarNumber }),
+        })
+        const data = await response.json()
+        setAadhaarState(data?.responseData?.stateName ?? '')
+        setLoading(true);
+        setRunonce(true);
+        if (verifyingCta) {
+          setDisplayProcess(verifyingCta);
+        } else {
+          setDisplayProcess("Intiating Claim Creation");
+        }
+        onStatusChange("Intiating Claim Creation");
+        setWebViewVisible(false);
+      }
+      getDetails();
+    }
+  } , [aadhaarNumber, token])
 
   function extractHostname(url: string): string {
     let hostname;
@@ -199,7 +241,6 @@ export default function ReclaimAadhaar({
             if (navState.loading) {
               return;
             }
-            setLoading(false);
 
             ref.current?.injectJavaScript(`
               (function() {
@@ -231,21 +272,13 @@ export default function ReclaimAadhaar({
           }}
           onMessage={async (e) => {
             const data = JSON.parse(e.nativeEvent.data);
-            if (data.uid) {
-              setAadhaarState(String(data.uid));
+            if (data.uid) {  
+              setAadhaarNumber(String(data.uid));
             }
+
             if (data.value) {
               if (data.value !== "") {
                 setToken(String(data.value));
-                setLoading(true);
-                setRunonce(true);
-                if (verifyingCta) {
-                  setDisplayProcess(verifyingCta);
-                } else {
-                  setDisplayProcess("Intiating Claim Creation");
-                }
-                onStatusChange("Intiating Claim Creation");
-                setWebViewVisible(false);
               }
             }
           }}
@@ -336,7 +369,7 @@ export default function ReclaimAadhaar({
                     },
                     context: context,
                     secretParams: {
-                      stateName: String(aadhaarState),
+                      uid: String(aadhaarNumber),
                       token: String(token),
                     },
                     ownerPrivateKey: privateKey,
@@ -365,6 +398,8 @@ export default function ReclaimAadhaar({
                     setDisplayProcess("Creating Claim");
                   }
                   onStatusChange("Claim Created Successfully");
+                  setLoading(false);
+
                 }
               }
 
@@ -390,6 +425,8 @@ export default function ReclaimAadhaar({
                   },
                 ]);
                 setWebViewVisible(false);
+                setLoading(false);
+                setDisplayProcess("Claim Created Successfully");
               }
 
               if (JSON.parse(event.nativeEvent.data).type === "error") {
