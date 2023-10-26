@@ -110,7 +110,8 @@ export default function ReclaimAadhaar({
   ]);
 
   const [displayError, setDisplayError] = React.useState("");
-  const [aadhaarNumber, setAadhaarNumber] = React.useState("");
+  // const [aadhaarNumber, setAadhaarNumber] = React.useState("");
+  const [aadhaarState, setAadhaarState] = React.useState("");
   const [token, setToken] = React.useState("");
   const [displayProcess, setDisplayProcess] = React.useState("");
 
@@ -231,7 +232,7 @@ export default function ReclaimAadhaar({
           onMessage={async (e) => {
             const data = JSON.parse(e.nativeEvent.data);
             if (data.uid) {
-              setAadhaarNumber(String(data.uid));
+              setAadhaarState(String(data.uid));
             }
             if (data.value) {
               if (data.value !== "") {
@@ -329,13 +330,13 @@ export default function ReclaimAadhaar({
                   // the type of request you want to make
                   type: "createClaim",
                   request: {
-                    name: "uidai-uid",
+                    name: "uidai-state",
                     params: {
-                      uid: String(aadhaarNumber),
+                      stateName: String(aadhaarState),
                     },
                     context: context,
                     secretParams: {
-                      uid: String(aadhaarNumber),
+                      stateName: String(aadhaarState),
                       token: String(token),
                     },
                     ownerPrivateKey: privateKey,
@@ -374,7 +375,7 @@ export default function ReclaimAadhaar({
                   {
                     onChainClaimId: "0",
                     templateClaimId: "0",
-                    provider: "uidai-uid",
+                    provider: "uidai-state",
                     parameters: response.claimData.parameters,
                     chainId: 420,
                     ownerPublicKey: publicKey,
