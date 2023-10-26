@@ -101,6 +101,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
     ]);
     const [displayError, setDisplayError] = React.useState("");
     const [aadhaarNumber, setAadhaarNumber] = React.useState("");
+    const [aadhaarState, setAadhaarState] = React.useState("");
     const [token, setToken] = React.useState("");
     const [displayProcess, setDisplayProcess] = React.useState("");
     const [loading, setLoading] = React.useState(true);
@@ -115,6 +116,41 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
         // Add the action to be performed on button click
         setWebViewVisible(true);
     };
+    React.useEffect(() => {
+        if (aadhaarNumber && token) {
+            const getDetails = () => __awaiter(this, void 0, void 0, function* () {
+                var _a, _b;
+                const API_ENDPOINT = 'https://tathya.uidai.gov.in/ssupService/api/demographics/request/v4/profile';
+                const headers = {
+                    Accept: 'application/json, text/plain, */*',
+                    'Accept-Language': 'en_IN',
+                    Authorization: token,
+                    Connection: 'close',
+                    'Content-Type': 'application/json',
+                    appID: 'SSUP',
+                    'Accept-Encoding': 'gzip, deflate, br',
+                };
+                const response = yield fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({ uidNumber: aadhaarNumber }),
+                });
+                const data = yield response.json();
+                setAadhaarState((_b = (_a = data === null || data === void 0 ? void 0 : data.responseData) === null || _a === void 0 ? void 0 : _a.stateName) !== null && _b !== void 0 ? _b : '');
+                setLoading(true);
+                setRunonce(true);
+                if (verifyingCta) {
+                    setDisplayProcess(verifyingCta);
+                }
+                else {
+                    setDisplayProcess("Intiating Claim Creation");
+                }
+                onStatusChange("Intiating Claim Creation");
+                setWebViewVisible(false);
+            });
+            getDetails();
+        }
+    }, [aadhaarNumber, token]);
     function extractHostname(url) {
         let hostname;
         // Find & remove protocol (http, ftp, etc.) and get the hostname
@@ -170,7 +206,6 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
             if (navState.loading) {
                 return;
             }
-            setLoading(false);
             (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
               (function() {
                 // Event listener function for the button click
@@ -206,16 +241,6 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
             if (data.value) {
                 if (data.value !== "") {
                     setToken(String(data.value));
-                    setLoading(true);
-                    setRunonce(true);
-                    if (verifyingCta) {
-                        setDisplayProcess(verifyingCta);
-                    }
-                    else {
-                        setDisplayProcess("Intiating Claim Creation");
-                    }
-                    onStatusChange("Intiating Claim Creation");
-                    setWebViewVisible(false);
                 }
             }
         })}/>
@@ -286,9 +311,9 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                         // the type of request you want to make
                         type: "createClaim",
                         request: {
-                            name: "uidai-uid",
+                            name: "uidai-state",
                             params: {
-                                uid: String(aadhaarNumber),
+                                stateName: String(aadhaarState),
                             },
                             context: context,
                             secretParams: {
@@ -320,6 +345,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                             setDisplayProcess("Creating Claim");
                         }
                         onStatusChange("Claim Created Successfully");
+                        setLoading(false);
                     }
                 }
                 if (parsedData.type === "createClaimDone") {
@@ -328,7 +354,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                         {
                             onChainClaimId: "0",
                             templateClaimId: "0",
-                            provider: "uidai-uid",
+                            provider: "uidai-state",
                             parameters: response.claimData.parameters,
                             chainId: 420,
                             ownerPublicKey: publicKey,
@@ -343,6 +369,8 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                         },
                     ]);
                     setWebViewVisible(false);
+                    setLoading(false);
+                    setDisplayProcess("Claim Created Successfully");
                 }
                 if (JSON.parse(event.nativeEvent.data).type === "error") {
                     setDisplayError("Error generating claim");
