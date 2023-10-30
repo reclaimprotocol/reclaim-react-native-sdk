@@ -219,14 +219,14 @@ export default function ReclaimAadhaar({
           thirdPartyCookiesEnabled={true}
           // @ts-ignore
           ref={ref}
-          onLoadEnd={() => {
-            ref.current?.injectJavaScript(`
+          // onLoadEnd={() => {
+          //   ref.current?.injectJavaScript(`
       
-                  var logInButton = document.querySelector('.button_btn__1dRFj');
-                  if (logInButton) {
-                      logInButton.click();
-                    }`);
-          }}
+          //         var logInButton = document.querySelector('.button_btn__1dRFj');
+          //         if (logInButton) {
+          //             logInButton.click();
+          //           }`);
+          // }}
           setSupportMultipleWindows={false}
           userAgent={
             Platform.OS === "android"
