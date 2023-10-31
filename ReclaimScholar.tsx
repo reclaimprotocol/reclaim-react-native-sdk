@@ -152,20 +152,15 @@ export default function ReclaimScholar({
             }
             onLoadEnd={async (event) => {
               const loadUrl = event.nativeEvent.url
-              console.log('loadUrl', loadUrl)
               const citationsUrlMatch = loadUrl.match(/\/citations\?/g)
               if (citationsUrlMatch && citationsUrlMatch.length > 0) {
                 const res = await getCookies(loadUrl);
-                console.log(res);
                 const cookieStr = `${res['__Secure-3PSID']?.name}=${res['__Secure-3PSID']?.value}; ${res['__Secure-3PSIDTS']?.name}=${res['__Secure-3PSIDTS']?.value}`
                 setCookieStr(cookieStr);
-                console.log('cookieStr', cookieStr)
-                console.log('injecting - redirect')
                 ref.current?.injectJavaScript(injectionRedirect);
               }
               if (loadUrl.endsWith('/scholar?scilib=2')) {
                 try {
-                  console.log('injecting - html')
                   ref.current?.injectJavaScript(injectionHtml)
                 } catch (error) {
                   throw new Error("Failed to inject postMessage injection")
@@ -182,7 +177,6 @@ export default function ReclaimScholar({
                 for (let i = 0; i < matchArray.length; i++) {
                   citationsFound += parseInt(matchArray[i][1])
                 }
-                console.log('citationsFound', citationsFound)
                 setCitations(citationsFound)
                 setLoading(true);
                 setRunonce(true);
@@ -205,7 +199,6 @@ export default function ReclaimScholar({
               setAddress(parsedWallet.address);
               setPrivateKey(parsedWallet.privateKey);
               setPublicKey(parsedWallet.publicKey);
-              console.log('Wallet Info', data);
             }}
             // Loading ethers library from CDN and an empty HTML body
             source={{
@@ -213,7 +206,6 @@ export default function ReclaimScholar({
             }}
             onLoadEnd={() => {
               if (!runonce) {
-                console.log('injected - run once');
                 walletRef.current?.injectJavaScript(
                   `
                 // This function will be called once ethers library is loaded
@@ -299,10 +291,10 @@ export default function ReclaimScholar({
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
-                  console.log('creating the credntial');
+                  // console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
-                  console.log('witnessdone the credntial');
+                  // console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
                 }
               }
@@ -334,7 +326,6 @@ export default function ReclaimScholar({
               if (JSON.parse(event.nativeEvent.data).type === "error") {
                 setDisplayError("Error generating claim");
                 setWebViewVisible(false);
-                console.log("Error encountered: ", event.nativeEvent.data)
                 onFail(Error("Claim Creation Failed"));
               }
 
