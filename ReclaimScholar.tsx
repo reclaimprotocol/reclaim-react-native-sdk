@@ -365,7 +365,7 @@ export default function ReclaimScholar({
               <Text style={[styles.displayError]}>{displayError}</Text>
             ) : displayProcess ? (
               <>
-                <Text style={[styles.displayCitations]}>Total Citations on Google Scholar: {citations}<br/></Text>
+                <Text style={[styles.displayCitations]}>Total Citations on Google Scholar: {citations}</Text>
                 <Text style={[styles.displayProcess]}>{displayProcess}</Text>
               </>
             ) : (
