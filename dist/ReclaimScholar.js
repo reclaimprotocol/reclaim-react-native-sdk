@@ -329,7 +329,7 @@ function ReclaimScholar({ title, subTitle, cta, onSuccess, onFail, }) {
           </react_native_1.View>
           <react_native_1.View style={[styles.buttonWrapper, styles.rowFlexBox]}>
             {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<>
-                <react_native_1.Text style={[styles.displayCitations]}>Total Citations on Google Scholar: {citations}</react_native_1.Text>
+                <react_native_1.Text style={[styles.displayCitations]}>{`Total Citations on Google Scholar: ${citations}\n`}</react_native_1.Text>
                 <react_native_1.Text style={[styles.displayProcess]}>{displayProcess}</react_native_1.Text>
               </>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[styles.button, styles.buttonFlexBox]}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
