@@ -364,10 +364,7 @@ export default function ReclaimScholar({
             {displayError ? (
               <Text style={[styles.displayError]}>{displayError}</Text>
             ) : displayProcess ? (
-              <>
-                <Text style={[styles.displayCitations]}>{`Total Citations on Google Scholar: ${citations}\n`}</Text>
-                <Text style={[styles.displayProcess]}>{displayProcess}</Text>
-              </>
+              <Text style={[styles.displayCitations]}>{`User's total citations: ${citations}\nProof Status -> ${displayProcess}`}</Text>
             ) : (
               <TouchableOpacity
                 activeOpacity={0.5}
