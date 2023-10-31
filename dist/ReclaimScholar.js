@@ -328,7 +328,7 @@ function ReclaimScholar({ title, subTitle, cta, onSuccess, onFail, }) {
             </react_native_1.View>
           </react_native_1.View>
           <react_native_1.View style={[styles.buttonWrapper, styles.rowFlexBox]}>
-            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayCitations]}>{`User's total citations: ${citations}\nProof Status -> ${displayProcess}`}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[styles.button, styles.buttonFlexBox]}>
+            {displayError ? (<react_native_1.Text style={[styles.displayError]}>{displayError}</react_native_1.Text>) : displayProcess ? (<react_native_1.Text style={[styles.displayCitations]}>{`User's total citations: ${citations}\nProof Status -> ${displayProcess}`}</react_native_1.Text>) : (<react_native_1.TouchableOpacity activeOpacity={0.5} onPress={onClickListener} style={[styles.button, styles.buttonFlexBox]} disabled={!privateKey}>
                 <react_native_1.View style={[styles.content, styles.buttonFlexBox]}>
                   <react_native_1.Text style={[styles.label, styles.labelTypo]}>{cta}</react_native_1.Text>
                 </react_native_1.View>

@@ -370,6 +370,7 @@ export default function ReclaimScholar({
                 activeOpacity={0.5}
                 onPress={onClickListener}
                 style={[styles.button, styles.buttonFlexBox]}
+                disabled={!privateKey}
               >
                 <View style={[styles.content, styles.buttonFlexBox]}>
                   <Text style={[styles.label, styles.labelTypo]}>{cta}</Text>
