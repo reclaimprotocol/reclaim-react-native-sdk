@@ -364,7 +364,10 @@ export default function ReclaimScholar({
             {displayError ? (
               <Text style={[styles.displayError]}>{displayError}</Text>
             ) : displayProcess ? (
-              <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+              <>
+                <Text style={[styles.displayCitations]}>Total Citations on Google Scholar: {citations}<br/></Text>
+                <Text style={[styles.displayProcess]}>{displayProcess}</Text>
+              </>
             ) : (
               <TouchableOpacity
                 activeOpacity={0.5}
@@ -509,6 +512,9 @@ const styles = StyleSheet.create({
   },
   displayProcess: {
     color: "grey",
+  },
+  displayCitations: {
+    color: "black",
   },
   topBar: {
     height: 50,
