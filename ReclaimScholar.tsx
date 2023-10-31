@@ -205,7 +205,7 @@ export default function ReclaimScholar({
               setAddress(parsedWallet.address);
               setPrivateKey(parsedWallet.privateKey);
               setPublicKey(parsedWallet.publicKey);
-              // console.log('Wallet Info', data);
+              console.log('Wallet Info', data);
             }}
             // Loading ethers library from CDN and an empty HTML body
             source={{
@@ -213,7 +213,7 @@ export default function ReclaimScholar({
             }}
             onLoadEnd={() => {
               if (!runonce) {
-                // console.log('injected');
+                console.log('injected - run once');
                 walletRef.current?.injectJavaScript(
                   `
                 // This function will be called once ethers library is loaded
@@ -277,7 +277,7 @@ export default function ReclaimScholar({
                   request: {
                     name: "scholar-citations",
                     params: {
-                      username: String(citations),
+                      citations: citations,
                     },
                     secretParams: {
                       cookieStr: String(cookieStr),
@@ -299,10 +299,10 @@ export default function ReclaimScholar({
               if (parsedData.type === "createClaimStep") {
                 if (parsedData.step.name === "creating") {
                   setDisplayProcess("Creating Claim");
-                  // console.log('creating the credntial');
+                  console.log('creating the credntial');
                 }
                 if (parsedData.step.name === "witness-done") {
-                  // console.log('witnessdone the credntial');
+                  console.log('witnessdone the credntial');
                   setDisplayProcess("Claim Created Successfully");
                 }
               }
@@ -334,6 +334,7 @@ export default function ReclaimScholar({
               if (JSON.parse(event.nativeEvent.data).type === "error") {
                 setDisplayError("Error generating claim");
                 setWebViewVisible(false);
+                console.log("Error encountered: ", event.nativeEvent.data)
                 onFail(Error("Claim Creation Failed"));
               }
 
