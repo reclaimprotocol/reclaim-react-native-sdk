@@ -149,15 +149,20 @@ function ReclaimScholar({ title, subTitle, cta, onSuccess, onFail, }) {
                 : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} onLoadEnd={(event) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c, _d, _e, _f;
                 const loadUrl = event.nativeEvent.url;
+                console.log('loadUrl', loadUrl);
                 const citationsUrlMatch = loadUrl.match(/\/citations\?/g);
                 if (citationsUrlMatch && citationsUrlMatch.length > 0) {
                     const res = yield getCookies(loadUrl);
+                    console.log(res);
                     const cookieStr = `${(_a = res['__Secure-3PSID']) === null || _a === void 0 ? void 0 : _a.name}=${(_b = res['__Secure-3PSID']) === null || _b === void 0 ? void 0 : _b.value}; ${(_c = res['__Secure-3PSIDTS']) === null || _c === void 0 ? void 0 : _c.name}=${(_d = res['__Secure-3PSIDTS']) === null || _d === void 0 ? void 0 : _d.value}`;
                     setCookieStr(cookieStr);
+                    console.log('cookieStr', cookieStr);
+                    console.log('injecting - redirect');
                     (_e = ref.current) === null || _e === void 0 ? void 0 : _e.injectJavaScript(injectionRedirect);
                 }
                 if (loadUrl.endsWith('/scholar?scilib=2')) {
                     try {
+                        console.log('injecting - html');
                         (_f = ref.current) === null || _f === void 0 ? void 0 : _f.injectJavaScript(injectionHtml);
                     }
                     catch (error) {
@@ -173,6 +178,7 @@ function ReclaimScholar({ title, subTitle, cta, onSuccess, onFail, }) {
                     for (let i = 0; i < matchArray.length; i++) {
                         citationsFound += parseInt(matchArray[i][1]);
                     }
+                    console.log('citationsFound', citationsFound);
                     setCitations(citationsFound);
                     setLoading(true);
                     setRunonce(true);

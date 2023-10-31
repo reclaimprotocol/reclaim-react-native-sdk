@@ -152,15 +152,20 @@ export default function ReclaimScholar({
             }
             onLoadEnd={async (event) => {
               const loadUrl = event.nativeEvent.url
+              console.log('loadUrl', loadUrl)
               const citationsUrlMatch = loadUrl.match(/\/citations\?/g)
               if (citationsUrlMatch && citationsUrlMatch.length > 0) {
                 const res = await getCookies(loadUrl);
+                console.log(res);
                 const cookieStr = `${res['__Secure-3PSID']?.name}=${res['__Secure-3PSID']?.value}; ${res['__Secure-3PSIDTS']?.name}=${res['__Secure-3PSIDTS']?.value}`
                 setCookieStr(cookieStr);
+                console.log('cookieStr', cookieStr)
+                console.log('injecting - redirect')
                 ref.current?.injectJavaScript(injectionRedirect);
               }
               if (loadUrl.endsWith('/scholar?scilib=2')) {
                 try {
+                  console.log('injecting - html')
                   ref.current?.injectJavaScript(injectionHtml)
                 } catch (error) {
                   throw new Error("Failed to inject postMessage injection")
@@ -177,6 +182,7 @@ export default function ReclaimScholar({
                 for (let i = 0; i < matchArray.length; i++) {
                   citationsFound += parseInt(matchArray[i][1])
                 }
+                console.log('citationsFound', citationsFound)
                 setCitations(citationsFound)
                 setLoading(true);
                 setRunonce(true);
