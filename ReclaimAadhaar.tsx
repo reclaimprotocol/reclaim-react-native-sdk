@@ -76,6 +76,11 @@ true; // note: this is required, or you'll sometimes get silent failures
 const ScreenHeight = Dimensions.get("window").height;
 const ScreenWidth = Dimensions.get("window").width;
 
+const DEFAULT_USER_AGENT =
+  Platform.OS === 'android'
+    ? 'Chrome/93.0.4577.82 Mobile Safari/537.36'
+    : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75'
+
 export default function ReclaimAadhaar({
   title,
   subTitle,
@@ -136,6 +141,7 @@ export default function ReclaimAadhaar({
   React.useEffect(() => {
     if(aadhaarNumber && token)
     {
+      setWebViewVisible(false);
       const getDetails = async () => {
         const API_ENDPOINT = 'https://tathya.uidai.gov.in/ssupService/api/demographics/request/v4/profile'
       
@@ -165,7 +171,6 @@ export default function ReclaimAadhaar({
           setDisplayProcess("Intiating Claim Creation");
         }
         onStatusChange("Intiating Claim Creation");
-        setWebViewVisible(false);
       }
       getDetails();
     }
@@ -215,24 +220,16 @@ export default function ReclaimAadhaar({
 
         <WebView
           injectedJavaScript={injection}
-          source={{ uri: "https://myaadhaar.uidai.gov.in/" }}
+          source={{ uri: "https://myaadhaar.uidai.gov.in/verifyAadhaar" }}
+          startInLoadingState={true}
+          userAgent={DEFAULT_USER_AGENT}
           thirdPartyCookiesEnabled={true}
+          cacheEnabled={true}
+          domStorageEnabled={true}
+          // cacheMode="LOAD_NO_CACHE"
           // @ts-ignore
           ref={ref}
-          onLoadEnd={() => {
-            ref.current?.injectJavaScript(`
-      
-                  var logInButton = document.querySelector('.button_btn__1dRFj');
-                  if (logInButton) {
-                      logInButton.click();
-                    }`);
-          }}
           setSupportMultipleWindows={false}
-          userAgent={
-            Platform.OS === "android"
-              ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-              : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
-          }
           style={{ height: ScreenHeight, width: ScreenWidth }}
           onNavigationStateChange={async (navState) => {
             if (runonce) {
@@ -341,11 +338,8 @@ export default function ReclaimAadhaar({
             // @ts-ignore
             ref={claimRef}
             setSupportMultipleWindows={false}
-            userAgent={
-              Platform.OS === "android"
-                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"
-            }
+            renderP
+            userAgent={DEFAULT_USER_AGENT}
             style={{ height: 0, width: 0 }}
             onNavigationStateChange={async (navState) => {
               if (navState.loading) {
@@ -430,6 +424,7 @@ export default function ReclaimAadhaar({
               }
 
               if (JSON.parse(event.nativeEvent.data).type === "error") {
+                console.log('ERROR --', JSON.parse(event.nativeEvent.data));
                 setDisplayError("Error generating claim");
                 onStatusChange("Error generating claim");
                 setWebViewVisible(false);

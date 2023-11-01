@@ -81,6 +81,9 @@ true; // note: this is required, or you'll sometimes get silent failures
 `;
 const ScreenHeight = react_native_2.Dimensions.get("window").height;
 const ScreenWidth = react_native_2.Dimensions.get("window").width;
+const DEFAULT_USER_AGENT = react_native_1.Platform.OS === 'android'
+    ? 'Chrome/93.0.4577.82 Mobile Safari/537.36'
+    : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75';
 function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, showShell, verifyingCta, verifiedCta, style, buttonStyle, buttonTextStyle, onStatusChange = (text) => { }, }) {
     const [webViewVisible, setWebViewVisible] = React.useState(false);
     const cardStyle = react_native_1.StyleSheet.flatten([styles.ReclaimAadhaarCard, style]);
@@ -118,6 +121,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
     };
     React.useEffect(() => {
         if (aadhaarNumber && token) {
+            setWebViewVisible(false);
             const getDetails = () => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;
                 const API_ENDPOINT = 'https://tathya.uidai.gov.in/ssupService/api/demographics/request/v4/profile';
@@ -146,7 +150,6 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                     setDisplayProcess("Intiating Claim Creation");
                 }
                 onStatusChange("Intiating Claim Creation");
-                setWebViewVisible(false);
             });
             getDetails();
         }
@@ -186,19 +189,10 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
           {loading ? <LoadingSpinner_1.default /> : <react_native_1.Text> </react_native_1.Text>}
         </react_native_1.View>
 
-        <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: "https://myaadhaar.uidai.gov.in/" }} thirdPartyCookiesEnabled={true} 
+        <react_native_webview_1.default injectedJavaScript={injection} source={{ uri: "https://myaadhaar.uidai.gov.in/verifyAadhaar" }} startInLoadingState={true} userAgent={DEFAULT_USER_AGENT} thirdPartyCookiesEnabled={true} cacheEnabled={true} domStorageEnabled={true} 
+    // cacheMode="LOAD_NO_CACHE"
     // @ts-ignore
-    ref={ref} onLoadEnd={() => {
-            var _a;
-            (_a = ref.current) === null || _a === void 0 ? void 0 : _a.injectJavaScript(`
-      
-                  var logInButton = document.querySelector('.button_btn__1dRFj');
-                  if (logInButton) {
-                      logInButton.click();
-                    }`);
-        }} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
-            ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-            : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+    ref={ref} setSupportMultipleWindows={false} style={{ height: ScreenHeight, width: ScreenWidth }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
             var _a;
             if (runonce) {
                 return;
@@ -292,9 +286,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
         />
           <react_native_webview_1.default source={{ uri: "https://sdk-rpc.reclaimprotocol.org/" }} thirdPartyCookiesEnabled={true} 
         // @ts-ignore
-        ref={claimRef} setSupportMultipleWindows={false} userAgent={react_native_1.Platform.OS === "android"
-                ? "Chrome/18.0.1025.133 Mobile Safari/535.19"
-                : "AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75"} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
+        ref={claimRef} setSupportMultipleWindows={false} renderP userAgent={DEFAULT_USER_AGENT} style={{ height: 0, width: 0 }} onNavigationStateChange={(navState) => __awaiter(this, void 0, void 0, function* () {
                 var _b;
                 if (navState.loading) {
                     return;
@@ -373,6 +365,7 @@ function ReclaimAadhaar({ title, subTitle, cta, context, onSuccess, onFail, show
                     setDisplayProcess("Claim Created Successfully");
                 }
                 if (JSON.parse(event.nativeEvent.data).type === "error") {
+                    console.log('ERROR --', JSON.parse(event.nativeEvent.data));
                     setDisplayError("Error generating claim");
                     onStatusChange("Error generating claim");
                     setWebViewVisible(false);
